@@ -1,3 +1,13 @@
+/*
+ * Event list
+ * - user_joined
+ * - user_left
+ * - user_box_updated
+ * - property_changed
+ * - display_name_changed
+ * - track_added
+ * - track_removed
+ */
 var init_win_env = function(win, preview, event_listener, screen_id){
     win.Jitsi = {};
     win.Jitsi._callbacks = {};
