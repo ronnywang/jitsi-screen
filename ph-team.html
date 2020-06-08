@@ -229,14 +229,16 @@ var update_screen_video = function(){
                 old_track.detach(video_dom[0]);
             }
             if (tracks.length) {
-                tracks[0].attach(video_dom[0]);
-                if ($(this).attr('data-select') == 'true') {
-                    selected_users[user_id] = 'select';
-                }
+                if (!old_track || old_track.ssrc != tracks[0].ssrc) {
+                    tracks[0].attach(video_dom[0]);
+                    if ($(this).attr('data-select') == 'true') {
+                        selected_users[user_id] = 'select';
+                    }
 
-                video_dom.show();
-                video_dom[0].__track = tracks[0];
-                video_dom[0].play().catch(function(e){ restore_inactive_track(); });
+                    video_dom.show();
+                    video_dom[0].__track = tracks[0];
+                    video_dom[0].play().catch(function(e){ restore_inactive_track(); });
+                }
             } else {
                 video_dom.hide();
             }
