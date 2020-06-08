@@ -34,6 +34,7 @@ var current_data = null;
 var teams = {};
 var people = {};
 var dashboard = {};
+var message_logs = [];
 var user_type;
 var current_user_id;
 var user_name;
@@ -441,6 +442,7 @@ var onConnected = function() {
                     popup_window.Jitsi.fire('property_changed', {id: id, text: text});
             });
             room.on(JitsiMeetJS.events.conference.MESSAGE_RECEIVED, (id, text, ts) => {
+                    message_logs.push({id: id, text: text, ts: ts});
                     popup_window.Jitsi.fire('message_received', {id: id, text: text, ts: ts});
             });
             room.on(JitsiMeetJS.events.conference.USER_JOINED, (id, user) => {
