@@ -1,0 +1,116 @@
+5
+總統致詞合照
+<style>
+div {
+    position: absolute;
+}
+
+#president-video {
+    top: 60px;
+    left: 30px;
+    width: 1200px;
+    height: 675px;
+}
+
+#president-title {
+    top: 750px;
+    left: 30px;
+}
+
+#viewer-video {
+    top: 200px;
+    left: 600px;
+    width: 600px;
+    height: 337px;
+}
+#viewer-title {
+    top: 550px;
+    left: 600px;
+}
+.team-name {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background: white;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<h1>2020總統盃黑客松</h1>
+<div class="video-box" data-id="1" data-select="true" id="president-video"></div>
+<div id="president-title">中華民國總統 蔡英文</div>
+<div class="team-box video-box" data-id="2" data-select="true" id="viewer-video" style="opacity: 0"></div>
+<div id="viewer-title" class="team-box" style="opacity: 0">團隊：</div>
+<script type="text/html" id="tmpl-team-status">
+<div class="team-status">
+	<div class="team-name"></div>
+</div>
+</script>
+<script>
+
+var teams;
+$.get('team.csv', function(content){
+    teams = {};
+    content.split("\n").map(function(line){
+        if (line == '') return;
+        var terms = line.split('|');
+        if (terms[0] != 'team') return;
+        teams[terms[1]] = terms[2];
+    });
+    $('#viewer-title').text('團隊：' + Jitsi.getUser(Jitsi.getMyID()).name);
+});
+
+Jitsi.addAction('切獨照', function() {
+    $('#president-title').animate({ top: 550, left: 0}, 1000);
+    $('#president-video').animate({ top: 200, left: 0, width: 600, height: 337, }, 1000, function(){
+        $('.team-box').animate({ opacity: 1 });
+    });
+});
+Jitsi.addAction('切合照', function() {
+    $('#president-title').animate({opacity: 0}, 1000, function(){
+        $('#president-title').css({top: 750, left: 30});
+    });
+    var c = 0;
+    for (var id in teams) {
+		var dom = $($('#tmpl-team-status').html());
+        $('.team-name', dom).text(teams[id]);
+        dom.attr('id', 'team-status-' + id);
+        if (c == 12) c ++;
+        dom.css({
+            width: 240,
+            height: 135,
+            top: 60 + Math.floor(c / 5) * 135,
+            left: 30 + (c % 5) * 240,
+            opacity: 0,
+        });
+        dom.addClass('team-video-box');
+        $('body').append(dom);
+        c ++;
+    }
+    users = Jitsi.getUsers();
+    for (var user of users) {
+        if ('undefined' === typeof(user.properties['user'])) {
+            continue;
+        }
+        if (user.properties['user'].match('^team-')) {
+            var team_id = user.properties['user'].split('-')[1];
+            $('#team-status-' + team_id).attr('data-user', user.id).addClass('video-box');
+        }
+    }
+    Jitsi.reload();
+
+    $('.team-box').animate({opacity: 0}, 1000, function(){
+        $('#president-video').animate({width: 240, height: 135, top: 60+135*2, left: 30+240*2}, 1000, function(){
+            $('.team-video-box').animate({opacity: 1});
+        });
+    });
+});
+Jitsi.addAction('回單人', function() {
+    $('.team-video-box').animate({opacity: 0}, 1000, function(){
+        $('.team-video-box').remove();
+        Jitsi.reload();
+        $('#president-video').animate({width: 1200, height: 675, top: 60, left: 30}, 1000, function(){
+            $('#president-title').animate({opacity: 1}, 1000);
+        });
+    });
+});
+</script>

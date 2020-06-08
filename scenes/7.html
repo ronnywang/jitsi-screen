@@ -1,0 +1,351 @@
+7
+分組開工
+<style>
+#left-list .team-box{
+    height: 100px;
+    border: 1px solid black;
+    position: relative;
+}
+.team-status {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+}
+.team-detail {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+}
+#main-video {
+    width: 600px;
+    height: 337px;
+}
+.member-box {
+    width: 200px;
+    height: 112px;
+    position: relative;
+    float: left;
+}
+
+.member-box .video-box {
+    width: 100%;
+    height: 100%;
+}
+
+.member-box .name {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.5); 
+}
+
+.member-box .tag {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: rgba(255, 255, 255, 0.5); 
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<div class="container-fluid">
+<h1>2020總統盃黑客松</h1>
+<div class="row">
+    <div class="col-6" id="col-left">
+        <div class="col-left" id="left-team" style="display:none"><!-- 已經在單一團隊畫面中 -->
+            <h1 id="team-name">團隊：</h1>
+            <div id="main-video" class="video-box"></div>
+            <span id="main-title"></span>
+        </div><!-- #left-team -->
+        <div class="col-left container" id="left-list"><!-- 沒在看單一團隊，顯示完整列表 -->
+        </div>
+        <script type="text/html" id="tmpl-team-box">
+<div class="col-4 team-box">
+<div class="team-name"></div>
+<div class="team-status">未知</div>
+<button class="team-detail">查看</button>
+</div>
+        </script>
+    </div><!-- #col-left -->
+    <div class="col-6" id="col-right">
+        <div class="col-right" id="right-team" style="display:none"><!-- 已經在單一團隊畫面中 -->
+            <div id="member-list">
+                正在討論成員在這邊
+            </div>
+            <div style="clear: both"></div>
+            <script type="text/html" id="tmpl-member-box">
+            <div class="member-box">
+                <div class="video-box"></div>
+                <div class="name"></div>
+                <div class="tag"></div>
+            </div>
+            </script>
+            <div id="people-feature"><!-- 團隊沒有的功能 -->
+                <button id="leave-team">離開這團隊</button>
+            </div>
+            <div id="team-feature"><!-- 團隊功能 -->
+                <form id="status-form">
+                    變更狀態為：<select name="status">
+                        <option>等待中</option>
+                        <option>求救進行中</option>
+                        <option>離開休息中</option>
+                    </select>
+                    <button type="submit">變更</button>
+                </form>
+            </div>
+        </div><!-- #right-team -->
+        <div class="col-right" id="right-list"><!-- 沒在看單一團隊，顯示完整列表 -->
+            <div id="team-preview"><!-- 團隊狀態 -->
+                <div id="team-preview-title">隊名</div>
+                <div> 這裡可以放一些事先有的團隊介紹...  </div>
+                <h5>討論室成員</h5>
+                <ul id="team-preview-member"></ul>
+                <button id="enter-team">加入討論</button>
+            </div>
+        </div>
+    </div><!-- #col-right -->
+</div><!-- .row -->
+</div><!-- .container-fluid -->
+<script>
+var teams;
+var current_team_id = 0;
+
+var get_viewing_team = function() {
+    var my_id = Jitsi.getMyID();
+    var my_data = Jitsi.getUser(my_id);
+    var type;
+    var status;
+    var joined_team_id;
+    if (!my_data || !my_data.properties || !my_data.properties.user) {
+        type = 'people';
+        joined_team_id = 0;
+    } else if (my_data.properties.user.split('-')[0] == 'team') {
+        type = 'team';
+        joined_team_id = my_data.properties.user.split('-')[1];
+        status = my_data.properties.status;
+    } else if (my_data.properties.user.split('-')[0] == 'people') {
+        type = 'people';
+        if (my_data.properties.viewing_team) {
+            joined_team_id = my_data.properties.viewing_team;
+        } else {
+            joined_team_id = 0;
+        }
+    } else {
+        type = 'people';
+        joined_team_id = 0;
+    }
+    return [type, joined_team_id, status];
+}
+
+var update_view = function(){
+    if (current_team_id) { // team mode
+        var team_members = get_team_members(current_team_id);
+        $('#main-video').attr('data-user', team_members.main_video);
+        $('#main-title').text(Jitsi.getUser(team_members.main_video).properties['display-name']);
+
+        // remove member-box
+        $('#member-list .member-box').each(function(){
+            if ('undefined' === typeof(team_members.roles[$(this).data('id')])) {
+                $(this).remove();
+            }
+        });
+        // add member-box
+        for (var id of team_members.sorted_members) {
+            if ($('#member-box-' + id).length) {
+                continue;
+            }
+            var member_box = $($('#tmpl-member-box').html());
+            $('.video-box', member_box).attr('data-user', id);
+            $('.name', member_box).text(Jitsi.getUser(id).properties['display-name']);
+            $('.tag', member_box).text(team_members.roles[id]);
+            member_box.attr('id', 'member-box-' + id).data('user-id', id);;
+            // TODO: insert to right place
+            $('#member-list').append(member_box);
+        }
+    } else { // list mode
+        for (var id in teams) {
+            var team_members = get_team_members(id);
+            if ('undefined' === typeof(team_members.special_members.team)) {
+                $('#team-box-' + id + ' .team-status').text('未知');
+            } else if (Jitsi.getUser(team_members.special_members.team) === null) {
+                $('#team-box-' + id + ' .team-status').text('未知');
+            } else {
+                $('#team-box-' + id + ' .team-status').text(Jitsi.getUser(team_members.special_members.team).properties.status);
+            }
+
+        }
+    }
+    Jitsi.reload();
+}
+
+var update_team_preview = function(team_id) {
+    $('#team-preview-title').text(teams[team_id]);
+    $('#team-preview-member').html('');
+    var team_members = get_team_members(team_id);
+    for (var id of team_members.sorted_members) {
+        if (team_members.roles[id] == 'teamss') {
+            continue;
+        }
+        var li_dom = $('<li></li>');
+        li_dom.text(Jitsi.getUser(id).properties['display-name']);
+        $('#team-preview-member').append(li_dom);
+    }
+    $('#enter-team').data('team_id', team_id);
+};
+
+$('#enter-team').click(function(e){
+    e.preventDefault();
+    var team_id = $('#enter-team').data('team_id');
+    Jitsi.updateProperty('viewing_team', team_id);
+    enter_team(team_id);
+});
+
+$('#leave-team').click(function(e){
+    e.preventDefault();
+    Jitsi.updateProperty('viewing_team', 0);
+    current_team_id = 0;
+    $('#left-team').hide();
+    $('#left-list').show();
+    $('#right-team').hide();
+    $('#right-list').show();
+});
+
+var get_team_members = function(team_id){
+    var users = Jitsi.getUsers();
+    var roles = {};
+    var special_members = {};
+    var main_video = null;
+
+    for (var user of users) {
+        if ('undefined' === typeof(user.properties['user'])) {
+            continue;
+        }
+        if (('team-' + team_id) == user.properties['user']) {
+            special_members.team = user.id;
+            if ('undefined' !== typeof(user.properties['viewing_user'])) {
+                main_video = user.properties['viewing_user'];
+            }
+            roles[user.id] = 'team';
+        } else if ('teamss-' + team_id == user.properties['user']) {
+            special_members.teamss = user.id;
+            roles[user.id] = 'teamss';
+        } else if (team_id == user.properties['viewing_team']) {
+            roles[user.id] = 'people';
+        } else {
+            continue;
+        }
+    }
+    var sorted_members = [];
+    for (var id in roles) {
+        sorted_members.push([id, roles[id]]);
+    }
+    sorted_members = sorted_members.sort(function(a, b){
+            if (a[1] == b[1]) {
+                // TODO: people weight
+                return 0;
+            }
+            if (a[1] == 'team') {
+                return -1;
+            } else if (b[1] == 'team') {
+                return 1;
+            } else if (a[1] == 'teamss') {
+                return -1;
+            } else if (b[1] == 'teamss') {
+                return 1;
+            }
+            return 0;
+    });
+    sorted_members = sorted_members.map(function(a) { return a[0]; });
+    if (main_video === null) {
+        main_video = sorted_members[0];
+    }
+    return {
+        special_members: special_members,
+        roles: roles,
+        sorted_members: sorted_members,
+        main_video: main_video,
+    }
+};
+
+var enter_team = function(team_id) {
+    var team_members = get_team_members(team_id);
+    current_team_id = team_id;
+
+    $('#member-list').html('');
+
+    $('#left-team').show();
+    $('#left-list').hide();
+    $('#right-team').show();
+    $('#right-list').hide();
+    $('#team-name').text('團隊：' + teams[team_id]);
+    update_view();
+};
+
+$('#left-list').on('click', '.team-detail', function(e){
+    e.preventDefault();
+    var team_id = $(this).parents('.team-box').data('team_id');
+    update_team_preview(team_id);
+});
+
+$.get('team.csv', function(content){
+    teams = {};
+    content.split("\n").map(function(line){
+        if (line == '') return;
+        var terms = line.split('|');
+        if (terms[0] != 'team') return;
+        teams[terms[1]] = terms[2];
+    });
+
+    var terms = [];
+    for (var id in teams) {
+        terms.push([id, teams[id]]);
+        if (terms.length == 3) {
+            var row_dom = $('<div class="row"></div>');
+            terms.map(function(term){
+                var col_dom = $($('#tmpl-team-box').html());
+                $('.team-name', col_dom).text(term[1]);
+                col_dom.data('team_id', term[0]);
+                col_dom.attr('id', 'team-box-' + term[0]);
+                row_dom.append(col_dom);
+            });
+            
+            $('#left-list').append(row_dom);
+            terms = [];
+        }
+    }
+
+    var viewing_status = get_viewing_team();
+    if (viewing_status[0] == 'team') {
+        $('#people-feature').remove();
+        if (viewing_status[2]) {
+            $('#status-form [name="status"]').val(viewing_status[2]);
+        } else {
+            Jitsi.updateProperty('status', '等待中');
+        }
+        $('#member-list').on('click', '.member-box', function(e){
+            e.preventDefault();
+            Jitsi.updateProperty('viewing_user', $(this).data('user-id'));
+            update_view();
+        });
+    } else {
+        $('#team-feature').remove();
+    }
+    if (viewing_status[1]) {
+        enter_team(viewing_status[1]);
+    }
+    update_view();
+});
+
+$('#status-form').submit(function(e){
+    e.preventDefault();
+    var status = $('#status-form [name="status"]').val();
+    Jitsi.updateProperty('status', status);
+});
+
+Jitsi.on('user_joined', update_view);
+Jitsi.on('user_left', update_view);
+Jitsi.on('property_changed', update_view);
+Jitsi.on('track_added', update_view);
+Jitsi.on('track_removed', update_view);
+
+</script>

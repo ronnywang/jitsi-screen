@@ -1,0 +1,78 @@
+4
+戰情室
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style>
+.team-status {
+    position: relative;
+    width: 19%;
+    height: 19%;
+    border: 1px solid black;
+    float: left;
+}
+
+.team-status .team-name {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+#main {
+    width: 100%;
+    height: 100%;
+}
+.video-box { float:left; }
+</style>
+<div id="main"></div>
+<script type="text/html" id="tmpl-team-status">
+<div class="team-status">
+	<div class="team-name"></div>
+</div>
+</script>
+<script>
+var teams = {};
+
+var update_user = function(){
+    var users = Jitsi.getUsers();
+    for (var user of users) {
+        if ('undefined' === typeof(user.properties['user'])) {
+            continue;
+        }
+        if (user.properties['user'].match('^team-')) {
+            var team_id = user.properties['user'].split('-')[1];
+            $('#team-status-' + team_id).attr('data-user', user.id).addClass('video-box');
+        }
+    }
+
+    Jitsi.reload();
+};
+
+$.get('team.csv', function(content){
+    content.split("\n").map(function(line){
+        if (line == '') return;
+        var terms = line.split('|');
+        if (terms[0] != 'team') return;
+        teams[terms[1]] = terms[2];
+		var dom = $($('#tmpl-team-status').html());
+        $('.team-name', dom).text(terms[2]);
+        dom.attr('id', 'team-status-' + terms[1]);
+        $('#main').append(dom);
+    });
+
+    Jitsi.on('user_joined', function(user){
+        update_user();
+    });
+    Jitsi.on('user_left', function(user){
+        update_user();
+    });
+    Jitsi.on('property_changed', function(user){
+        update_user();
+    });
+	Jitsi.on('track_added', function(track){
+		update_user();
+	});
+	Jitsi.on('track_removed', function(track){
+		update_user();
+	});
+    update_user();
+});
+</script>

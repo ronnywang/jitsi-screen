@@ -1,0 +1,29 @@
+6
+團隊提案
+<style>
+#left-part {
+    width: 50%;
+    float: left;
+}
+.video-box {
+    width: 1200px;
+    height: 675px;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<h1>2020總統盃黑客松</h1>
+<div class="video-box" data-id="1" data-select="true" id="main"></div>
+<span class="title">團隊：</span>
+<script>
+Jitsi.on('user_box_updated', function(){
+    var result_user_id = $('#main').attr('data-result-user');
+    var user = Jitsi.getUser(result_user_id);
+    if (user) {
+        if (user.properties['display-name']) {
+            $('.title').text('團隊：' + user.properties['display-name']);
+        } else {
+            $('.title').text('團隊：' + user.name);
+        }
+    }
+});
+</script>
