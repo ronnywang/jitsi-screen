@@ -1139,11 +1139,8 @@ var update_devices = function(tracks) {
 
 var onConnected = function() {
     var confOptions = {
-        openBridgeChannel: 'websocket',
+        openBridgeChannel: true,
         confID: jitsi_domain + '/' + jitsi_room,
-        capScreenshareBitrate: true,
-        disableRtx: false,
-        enableLayerSuspension: false,
     };
 
     $('#logined-area').show();
