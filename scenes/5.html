@@ -1,8 +1,28 @@
 5
 總統致詞合照
 <style>
+body {
+    height: 800px;
+    width: 1280px;
+    border: 1px solid red;
+    margin: 0;
+    background-color: #03151D;
+    font-family: "Open Sans", "微軟正黑體", "Microsoft JhengHei", sans-serif;
+    color: white;
+    overflow: hidden;
+}
+
 div {
     position: absolute;
+}
+
+#title-logo {
+    height: 60px;
+    width: 1280px;
+    background-image: url('assets/img/onlylogofont.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
 }
 
 #president-video {
@@ -16,7 +36,9 @@ div {
     top: 750px;
     left: 30px;
 }
-
+.team-status {  
+    outline: 1px solid #4D4398;
+}
 #viewer-video {
     top: 200px;
     left: 600px;
@@ -31,11 +53,14 @@ div {
     position: absolute;
     left: 0;
     bottom: 0;
-    background: white;
+    color: white;
+    font-size: 0.8rem;
+    
+    background-color: rgba(0,0,0,0.3);
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<h1>2020總統盃黑客松</h1>
+<div id="title-logo"></div>
 <div class="video-box" data-id="1" data-select="true" id="president-video"></div>
 <div id="president-title">中華民國總統 蔡英文</div>
 <div class="team-box video-box" data-id="2" data-select="true" id="viewer-video" style="opacity: 0"></div>
