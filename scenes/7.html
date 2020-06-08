@@ -332,6 +332,9 @@ var get_team_members = function(team_id){
             continue;
         }
     }
+    if ('undefined' === typeof(roles[main_video])) {
+        main_video = null;
+    }
     var sorted_members = [];
     for (var id in roles) {
         sorted_members.push([id, roles[id]]);
