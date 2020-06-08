@@ -312,7 +312,9 @@ $('#output-video').change(function(){
 var update_devices = function(tracks) {
     if (JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output')) {
         JitsiMeetJS.mediaDevices.enumerateDevices(devices => {
+            var origin_video = $('#output-video').val();
             $('#output-video').html('');
+            $('#output-video').append($('<option value="none">無</option>'));
             $('#output-audio').html('');
             device_list.audio = [];
             device_list.video = [];
@@ -326,6 +328,9 @@ var update_devices = function(tracks) {
                 }
                 if (device.kind == 'videoinput' && device.label != '') {
                     $('#output-video').append($('<option></option>').attr('value', device.deviceId).text(device.label));
+                    if (!origin_video) {
+                        origin_video = device.deviceId;
+                    }
                     has_video = true;
                     device_list.video.push(device);
                     if (!$('#camera-preview-' + device.deviceId).length) {
@@ -341,6 +346,9 @@ var update_devices = function(tracks) {
                         });
                     }
                 }
+            }
+            if (origin_video) {
+                $('#output-video').val(origin_video);
             }
             if (has_video) {
                 $('#output-video').change();
