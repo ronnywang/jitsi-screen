@@ -1,28 +1,36 @@
 4
 戰情室
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style src="assets/styles/reset.css" type="text/css"></style>
 <style>
 body {
+    padding: 1rem;
     background-color: #03151D;
     font-family: "Open Sans", "微軟正黑體", "Microsoft JhengHei", sans-serif;
+    overflow: hidden;
 }
 .team-status {
     position: relative;
-    width: 19%;
-    height: 19%;
-    border: 1px solid #4D4398;
+    width: 20%;
+    height: 20%;
+    outline: 1px solid #4D4398;
     float: left;
 }
 
 .center-box {
+    background-image: url('assets/img/logo_big.jpg');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
     position: relative;
-    width: 19%;
-    height: 19%;
-    border: 1px solid black;
+    width: 20%;
+    height: 20%;
+    outline: 1px solid black;
     float: left;
 }
 
 .team-status .team-name {
+    font-size: 1.2rem;
     position: absolute;
     color: white;
     background-color: rgba(0,0,0,0.3);
@@ -44,7 +52,6 @@ body {
 </script>
 <script type="text/html" id="tmpl-center-box">
 <div class="center-box">
-我是中間
 </div>
 </script>
 <script>
