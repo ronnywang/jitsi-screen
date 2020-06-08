@@ -33,6 +33,7 @@
 var current_data = null;
 var teams = {};
 var people = {};
+var dashboard = {};
 var user_type;
 var current_user_id;
 var user_name;
@@ -46,6 +47,9 @@ $.get('team.csv', function(content){
         } else if (terms[0] == 'people') {
             people[terms[1]] = terms[2];
             $('#user-select').append($('<option></option>').text('[個人]' + terms[2]).val('people-' + terms[1]));
+        } else if (terms[0] == 'dashboard') {
+            dashboard[terms[1]] = terms[2];
+            $('#user-select').append($('<option></option>').text('[戰情室]' + terms[2]).val('dashboard-' + terms[1]));
         }
     });
 }, 'text');
@@ -118,6 +122,8 @@ $('#jitsi-form').submit(function(e){
             user_name = teams[current_user_id];
         } else if (user_type == 'people') {
             user_name = people[current_user_id];
+        } else if (user_type == 'dashboard') {
+            user_name = dashboard[current_user_id];
         }
 
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
