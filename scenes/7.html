@@ -1,6 +1,7 @@
 7
 分組開工
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" />
 <style>
 body {
     height: 800px;
@@ -18,7 +19,7 @@ body {
   overflow-x: hidden;
   overflow-y: scroll;
 }
-.body-people .team-feature, .body-people #features-box {
+.body-people #team-feature, .body-people #features-box {
   display: none;
 }
 button {
@@ -29,9 +30,9 @@ button {
   margin: 3px;
 }
 #title-logo {
-    height: 55px;
+    height: 50px;
     width: 1280px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     background-image: url('assets/img/onlylogofont.png?v=1');
     background-repeat: no-repeat;
     background-position: center center;
@@ -66,7 +67,7 @@ button {
 
 #main-title {
   position: absolute;
-  bottom: 1.2rem;
+  bottom: 0;
   background-color: rgba(0,0,0,0.5);
 }
 
@@ -133,6 +134,7 @@ select {
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <div class="container-fluid">
+<div style="height: 10px"></div>
 <div id="title-logo"></div>
 <div class="row">
     <div class="col-6" id="col-left">
@@ -188,6 +190,8 @@ select {
     <div class="col-6">
       <div id="people-feature"><!-- 團隊沒有的功能 -->
           <button id="leave-team">離開這團隊</button>
+          <i class="fas microphone-stat fa-microphone-alt-slash"></i>
+          <i class="fas video-stat fa-video"></i>
       </div>
       <div id="team-feature"><!-- 團隊功能 -->
           <form id="status-form">
@@ -447,7 +451,7 @@ $.get('team.csv', function(content){
             update_team_preview($('.team-box').eq(dashboard_seq).data('team_id'));
         }, 5000);
     } else {
-        $('body').addClass('body-people');        
+        $('body').addClass('body-people');
     }
     if (viewing_status[1]) {
         enter_team(viewing_status[1]);
