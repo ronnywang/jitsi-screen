@@ -213,6 +213,11 @@ select {
     </div>
 </div>
 </div><!-- .container-fluid -->
+<script type="text/html" id="tmpl-help-message">
+<div class="help-message">
+<span class="time">[14:23:32]</span> <span class="team">揪松團</span> 與 <span class="people">專家王小明</span> 求助：「<span class="content">來救我</span>」
+</div>
+</script>
 <script>
 var teams;
 var people;
@@ -402,13 +407,36 @@ $('#left-list').on('click', '.team-detail', function(e){
     update_team_preview(team_id);
 });
 
+var process_message = function(text){
+    var data = JSON.parse(text.text);
+    if (!data) return;
+    var help_message = $($('#tmpl-help-message').html());
+    var t = new Date(data.time);
+    $('.time', help_message).text('[' + [
+            ('00' + t.getHours()).slice(-2),
+            ('00' + t.getMinutes()).slice(-2),
+            ('00' + t.getSeconds()).slice(-2),
+            ].join(':') + ']');
+    $('.team', help_message).text(teams[data.from_team_id]);
+    $('.people', help_message).text(people[data.to_people_id]);
+    $('.content', help_message).text(data.content);
+    $('#team-log-2').append(help_message);
+    $('#team-log').append(help_message);
+};
+
 $.get('team.csv', function(content){
     teams = {};
+    people = {};
+    $('#help-form [name="people"]').append($('<option value="0">請選擇...</option>'));
     content.split("\n").map(function(line){
         if (line == '') return;
         var terms = line.split('|');
-        if (terms[0] != 'team') return;
-        teams[terms[1]] = terms[2];
+        if (terms[0] == 'team') { 
+            teams[terms[1]] = terms[2];
+        } else if (terms[0] == 'people') {
+            people[terms[1]] = terms[2];
+            $('#help-form [name="people"]').append($('<option></option>').attr('value', terms[1]).text(terms[2]));
+        }
     });
 
     var terms = [];
@@ -457,6 +485,10 @@ $.get('team.csv', function(content){
         enter_team(viewing_status[1]);
     }
     update_view();
+    Jitsi.getMessageLog().map(process_message);
+    Jitsi.on('message_received', function(ret){
+        process_message(ret.text);
+    });
 });
 
 $('#status-form').submit(function(e){
