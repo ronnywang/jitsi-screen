@@ -10,26 +10,46 @@ body {
     background-color: #03151D;
     font-family: "Open Sans", "微軟正黑體", "Microsoft JhengHei", sans-serif;
     color: white;
-    overflow: hidden;
+}
+.body-team {
+  overflow: hidden;
+}
+.body-people {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+button {
+  color: white;
+  background-color: rgba(255,255,255,0.1);
+  border: 1px solid #4D4398;
+  border-radius: 3px;
+  margin: 3px;
 }
 #title-logo {
     height: 55px;
     width: 1280px;
-    margin-bottom: 5px;
+    margin-bottom: 15px;
     background-image: url('assets/img/onlylogofont.png?v=1');
     background-repeat: no-repeat;
     background-position: center center;
     background-size: contain;
 }
 #left-list .team-box{
-    height: 100px;
+    height: 85px;
     outline: 1px solid #4D4398;
     position: relative;
 }
+#team-name {
+  width: 600px;
+  padding: 5px;
+  background-color: rgba(255,255,255,0.1);
+}
+
 .team-status {
     position: absolute;
     left: 0px;
     bottom: 0px;
+    color: yellow;
 }
 .team-detail {
     position: absolute;
@@ -40,6 +60,17 @@ body {
     width: 600px;
     height: 337px;
 }
+
+#main-title {
+  position: absolute;
+  bottom: 1.2rem;
+  background-color: rgba(0,0,0,0.5);
+}
+
+#member-list {
+  height: 250px;
+}
+
 .member-box {
     width: 200px;
     height: 112px;
@@ -56,14 +87,40 @@ body {
     position: absolute;
     left: 0;
     bottom: 0;
-    background-color: rgba(255, 255, 255, 0.5); 
+    background-color: rgba(0, 0, 0, 0.5); 
 }
 
 .member-box .tag {
     position: absolute;
     right: 0;
     top: 0;
-    background-color: rgba(255, 255, 255, 0.5); 
+    background-color: rgba(0, 0, 0, 0.5); 
+}
+#team-preview {
+  height: 200px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+#team-log {
+  margin-top: 50px;
+  height: 400px;
+  outline: 1px solid #AAA;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+select {
+  margin: 5px 0;
+}
+#help-form input {
+    width: 80%;
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+    border: 1px solid white;
+    border-radius: 3px;
+}
+#features-box {
+  border: 1px solid #333;
+  
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -72,18 +129,19 @@ body {
 <div class="row">
     <div class="col-6" id="col-left">
         <div class="col-left" id="left-team" style="display:none"><!-- 已經在單一團隊畫面中 -->
-            <h1 id="team-name">團隊：</h1>
-            <div id="main-video" class="video-box"></div>
-            <span id="main-title"></span>
+            <h2 id="team-name"></h2>
+            <div id="main-video" class="video-box" data-select="true">
+              <span id="main-title"></span>
+            </div>
         </div><!-- #left-team -->
         <div class="col-left container" id="left-list"><!-- 沒在看單一團隊，顯示完整列表 -->
         </div>
         <script type="text/html" id="tmpl-team-box">
-<div class="col-4 team-box">
-<div class="team-name"></div>
-<div class="team-status">未知</div>
-<button class="team-detail">查看</button>
-</div>
+        <div class="col-4 m-0 p-0 team-box">
+          <div class="team-name"></div>
+          <div class="team-status">未知</div>
+          <button class="team-detail">查看</button>
+        </div>
         </script>
     </div><!-- #col-left -->
     <div class="col-6" id="col-right">
@@ -99,36 +157,47 @@ body {
                 <div class="tag"></div>
             </div>
             </script>
-            <div id="people-feature"><!-- 團隊沒有的功能 -->
-                <button id="leave-team">離開這團隊</button>
-            </div>
-            <div id="team-feature"><!-- 團隊功能 -->
-                <form id="status-form">
-                    變更狀態為：<select name="status">
-                        <option>等待中</option>
-                        <option>求救進行中</option>
-                        <option>離開休息中</option>
-                    </select>
-                    <button type="submit">變更</button>
-                </form>
-                <form id="help-form">
-                    與專家求助：<select name="people"></select><br>
-                    求助內容：<input type="text" name="content"><br>
-                    <button type="submit">求助</button>
-                </form>
-            </div>
         </div><!-- #right-team -->
         <div class="col-right" id="right-list"><!-- 沒在看單一團隊，顯示完整列表 -->
-            <div id="team-preview"><!-- 團隊狀態 -->
-                <div id="team-preview-title">隊名</div>
-                <div> 這裡可以放一些事先有的團隊介紹...  </div>
-                <h5>討論室成員</h5>
-                <ul id="team-preview-member"></ul>
-                <button id="enter-team">加入討論</button>
-            </div>
+            <div id="team-preview" class="container p-0 m-0"><!-- 團隊狀態 -->
+              <div class="row">
+                <div class="col">
+                  <div id="team-preview-title">隊名</div>
+                  <div> 這裡可以放一些事先有的團隊介紹...  </div>
+                </div>
+                <div class="col">
+                  <h5>討論室成員</h5>
+                  <ul id="team-preview-member"></ul>
+                </div>
+              </div>
+              <button id="enter-team">加入討論</button>
+            </div>          
+            <div id="team-log"></div>
         </div>
     </div><!-- #col-right -->
 </div><!-- .row -->
+<div class="row" id="features-box">
+    <div class="col-6">
+      <div id="people-feature"><!-- 團隊沒有的功能 -->
+          <button id="leave-team">離開這團隊</button>
+      </div>
+      <div id="team-feature"><!-- 團隊功能 -->
+          <form id="status-form">
+              變更狀態為：<select name="status">
+                  <option>等待中</option>
+                  <option>求救進行中</option>
+                  <option>離開休息中</option>
+              </select>
+              <button type="submit">變更</button>
+          </form>
+          <form id="help-form">
+              與專家求助：<select name="people"></select><br>
+              求助內容：<input type="text" name="content"><br>
+              <button type="submit">求助</button>
+          </form>
+      </div>
+    </div>
+</div>
 </div><!-- .container-fluid -->
 <script>
 var teams;
@@ -170,7 +239,7 @@ var update_view = function(){
 
         // remove member-box
         $('#member-list .member-box').each(function(){
-            if ('undefined' === typeof(team_members.roles[$(this).data('id')])) {
+            if ('undefined' === typeof(team_members.roles[$(this).data('user-id')])) {
                 $(this).remove();
             }
         });
@@ -302,7 +371,7 @@ var enter_team = function(team_id) {
     $('#left-list').hide();
     $('#right-team').show();
     $('#right-list').hide();
-    $('#team-name').text('團隊：' + teams[team_id]);
+    $('#team-name').text(teams[team_id]);
     update_view();
 };
 
@@ -342,6 +411,7 @@ $.get('team.csv', function(content){
     var viewing_status = get_viewing_team();
     if (viewing_status[0] == 'team') {
         $('#people-feature').remove();
+        $('body').addClass('body-team');
         if (viewing_status[2]) {
             $('#status-form [name="status"]').val(viewing_status[2]);
         } else {
@@ -353,6 +423,7 @@ $.get('team.csv', function(content){
             update_view();
         });
     } else {
+        $('body').addClass('body-people');        
         $('#team-feature').remove();
     }
     if (viewing_status[1]) {

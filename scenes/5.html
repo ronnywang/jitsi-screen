@@ -25,7 +25,7 @@ div {
 }
 
 #president-video {
-    top: 60px;
+    top: 70px;
     left: 30px;
     width: 1220px;
     height: 675px;
@@ -112,7 +112,7 @@ Jitsi.addAction('切合照', function() {
         dom.css({
             width: 244,
             height: 135,
-            top: 60 + Math.floor(c / 5) * 135,
+            top: 70 + Math.floor(c / 5) * 135,
             left: 30 + (c % 5) * 244,
             opacity: 0,
         });
@@ -133,7 +133,7 @@ Jitsi.addAction('切合照', function() {
     Jitsi.reload();
 
     $('.team-box').animate({opacity: 0}, 1000, function(){
-        $('#president-video').animate({width: 244, height: 135, top: 60+135*2, left: 30+244*2}, 1000, function(){
+        $('#president-video').animate({width: 244, height: 135, top: 70+135*2, left: 30+244*2}, 1000, function(){
             $('.team-video-box').animate({opacity: 1});
         });
     });
@@ -142,7 +142,7 @@ Jitsi.addAction('回單人', function() {
     $('.team-video-box').animate({opacity: 0}, 1000, function(){
         $('.team-video-box').remove();
         Jitsi.reload();
-        $('#president-video').animate({width: 1220, height: 675, top: 60, left: 30}, 1000, function(){
+        $('#president-video').animate({width: 1220, height: 675, top: 70, left: 30}, 1000, function(){
             $('#president-title').animate({opacity: 1}, 1000);
         });
     });
