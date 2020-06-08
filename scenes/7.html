@@ -211,7 +211,7 @@ var get_viewing_team = function() {
     var status;
     var joined_team_id;
     if (!my_data || !my_data.properties || !my_data.properties.user) {
-        type = 'people';
+        type = 'dashboard';
         joined_team_id = 0;
     } else if (my_data.properties.user.split('-')[0] == 'team') {
         type = 'team';
@@ -224,6 +224,9 @@ var get_viewing_team = function() {
         } else {
             joined_team_id = 0;
         }
+    } else if (my_data.properties.user.split('-')[0] == 'dashboard') {
+        type = 'dashboard';
+        joined_team_id = 0;
     } else {
         type = 'people';
         joined_team_id = 0;
@@ -422,6 +425,13 @@ $.get('team.csv', function(content){
             Jitsi.updateProperty('viewing_user', $(this).data('user-id'));
             update_view();
         });
+    } else if (viewing_status[0] == 'dashboard') {
+        $('body').addClass('body-dashboard');
+        var dashboard_seq = -1;
+        setInterval(function(){
+            dashboard_seq = (dashboard_seq + 1) % 24;
+            update_team_preview($('.team-box').eq(dashboard_seq).data('team_id'));
+        }, 5000);
     } else {
         $('body').addClass('body-people');        
         $('#team-feature').remove();
