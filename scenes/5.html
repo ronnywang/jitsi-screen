@@ -17,9 +17,9 @@ div {
 }
 
 #title-logo {
-    height: 60px;
+    height: 55px;
     width: 1280px;
-    background-image: url('assets/img/onlylogofont.png');
+    background-image: url('assets/img/onlylogofont.png?v=1');
     background-repeat: no-repeat;
     background-position: center center;
     background-size: contain;
@@ -28,41 +28,52 @@ div {
 #president-video {
     top: 60px;
     left: 30px;
-    width: 1200px;
+    width: 1220px;
     height: 675px;
 }
 
 #president-title {
+    width: 1280px;
+    font-size: 1.2rem;
     top: 750px;
+    text-align: center;
+    left: 0;
+}
+#president-title-left {
+    font-size: 1.2rem;
+    top: 550px;
     left: 30px;
+    opacity: 0;
 }
 .team-status {  
     outline: 1px solid #4D4398;
 }
 #viewer-video {
     top: 200px;
-    left: 600px;
+    left: 630px;
     width: 600px;
     height: 337px;
 }
 #viewer-title {
     top: 550px;
-    left: 600px;
+    left: 630px;
+    font-size: 1.2rem;
 }
 .team-name {
     position: absolute;
     left: 0;
     bottom: 0;
     color: white;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(0,0,0,0.66);
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <div id="title-logo"></div>
 <div class="video-box" data-id="1" data-select="true" id="president-video"></div>
 <div id="president-title">中華民國總統 蔡英文</div>
+<div id="president-title-left">中華民國總統 蔡英文</div>
 <div class="team-box video-box" data-id="2" data-select="true" id="viewer-video" style="opacity: 0"></div>
 <div id="viewer-title" class="team-box" style="opacity: 0">團隊：</div>
 <script type="text/html" id="tmpl-team-status">
@@ -85,15 +96,14 @@ $.get('team.csv', function(content){
 });
 
 Jitsi.addAction('切獨照', function() {
-    $('#president-title').animate({ top: 550, left: 0}, 1000);
-    $('#president-video').animate({ top: 200, left: 0, width: 600, height: 337, }, 1000, function(){
+    $('#president-title').animate({ opacity: 0 }, 1000);
+    $('#president-title-left').animate({ opacity: 1 }, 1000);
+    $('#president-video').animate({ top: 200, left: 30, width: 600, height: 337, }, 1000, function(){
         $('.team-box').animate({ opacity: 1 });
     });
 });
 Jitsi.addAction('切合照', function() {
-    $('#president-title').animate({opacity: 0}, 1000, function(){
-        $('#president-title').css({top: 750, left: 30});
-    });
+    $('#president-title-left').animate({ opacity: 0 }, 1000);
     var c = 0;
     for (var id in teams) {
 		var dom = $($('#tmpl-team-status').html());
@@ -101,10 +111,10 @@ Jitsi.addAction('切合照', function() {
         dom.attr('id', 'team-status-' + id);
         if (c == 12) c ++;
         dom.css({
-            width: 240,
+            width: 244,
             height: 135,
             top: 60 + Math.floor(c / 5) * 135,
-            left: 30 + (c % 5) * 240,
+            left: 30 + (c % 5) * 244,
             opacity: 0,
         });
         dom.addClass('team-video-box');
@@ -124,7 +134,7 @@ Jitsi.addAction('切合照', function() {
     Jitsi.reload();
 
     $('.team-box').animate({opacity: 0}, 1000, function(){
-        $('#president-video').animate({width: 240, height: 135, top: 60+135*2, left: 30+240*2}, 1000, function(){
+        $('#president-video').animate({width: 244, height: 135, top: 60+135*2, left: 30+244*2}, 1000, function(){
             $('.team-video-box').animate({opacity: 1});
         });
     });
@@ -133,7 +143,7 @@ Jitsi.addAction('回單人', function() {
     $('.team-video-box').animate({opacity: 0}, 1000, function(){
         $('.team-video-box').remove();
         Jitsi.reload();
-        $('#president-video').animate({width: 1200, height: 675, top: 60, left: 30}, 1000, function(){
+        $('#president-video').animate({width: 1220, height: 675, top: 60, left: 30}, 1000, function(){
             $('#president-title').animate({opacity: 1}, 1000);
         });
     });
