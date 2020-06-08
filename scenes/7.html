@@ -408,7 +408,11 @@ $('#left-list').on('click', '.team-detail', function(e){
 });
 
 var process_message = function(text){
-    var data = JSON.parse(text.text);
+    try {
+        var data = JSON.parse(text.text);
+    } catch (e) {
+        return;
+    }
     if (!data) return;
 
     var my_id = Jitsi.getMyID();
@@ -500,7 +504,7 @@ $.get('team.csv', function(content){
     update_view();
     Jitsi.getMessageLog().map(process_message);
     Jitsi.on('message_received', function(ret){
-        process_message(ret.text);
+        process_message(ret);
     });
 });
 
