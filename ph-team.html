@@ -424,6 +424,9 @@ var onConnected = function() {
                     var id = user.getId();
                     popup_window.Jitsi.fire('property_changed', {id: id, text: text});
             });
+            room.on(JitsiMeetJS.events.conference.MESSAGE_RECEIVED, (id, text, ts) => {
+                    popup_window.Jitsi.fire('message_received', {id: id, text: text, ts: ts});
+            });
             room.on(JitsiMeetJS.events.conference.USER_JOINED, (id, user) => {
                     if (!$(`#audio-${id}`).length) {
                         var audio_dom = $('<audio autoplay="1"></audio>').attr('id', 'audio-' + id);

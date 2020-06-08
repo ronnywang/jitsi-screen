@@ -61,6 +61,16 @@ var init_win_env = function(win, preview, event_listener, screen_id){
             room.setLocalParticipantProperty(name, value);
         }
     };
+    win.Jitsi.sendTextMessage = function(text) {
+        if (preview) {
+            return true;
+        } else {
+            if (!room) {
+                return true;
+            }
+            room.sendTextMessage(text);
+        }
+    };
     win.Jitsi.getUser = function(id){
         if (preview) {
             var first = true;
