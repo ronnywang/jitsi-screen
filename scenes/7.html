@@ -92,6 +92,11 @@
                     </select>
                     <button type="submit">變更</button>
                 </form>
+                <form id="help-form">
+                    與專家求助：<select name="people"></select><br>
+                    求助內容：<input type="text" name="content"><br>
+                    <button type="submit">求助</button>
+                </form>
             </div>
         </div><!-- #right-team -->
         <div class="col-right" id="right-list"><!-- 沒在看單一團隊，顯示完整列表 -->
@@ -108,6 +113,7 @@
 </div><!-- .container-fluid -->
 <script>
 var teams;
+var people;
 var current_team_id = 0;
 
 var get_viewing_team = function() {
@@ -340,6 +346,16 @@ $('#status-form').submit(function(e){
     e.preventDefault();
     var status = $('#status-form [name="status"]').val();
     Jitsi.updateProperty('status', status);
+});
+
+$('#help-form').submit(function(e){
+    e.preventDefault();
+    message = {type: 'help'};
+    message.from_team_id = current_team_id;
+    message.time = (new Date).getTime();
+    message.to_people_id = $('#help-form [name="people"]').val();
+    message.content = $('#help-form [name="content"]').val();
+    Jitsi.sendTextMessage(JSON.stringify(message));
 });
 
 Jitsi.on('user_joined', update_view);
