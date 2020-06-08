@@ -11,12 +11,15 @@ body {
     font-family: "Open Sans", "微軟正黑體", "Microsoft JhengHei", sans-serif;
     color: white;
 }
-.body-team {
+.body-dashboard, .body-team {
   overflow: hidden;
 }
 .body-people {
   overflow-x: hidden;
   overflow-y: scroll;
+}
+.body-people .team-feature, .body-people #features-box {
+  display: none;
 }
 button {
   color: white;
@@ -122,8 +125,10 @@ select {
   margin-top: 50px;
 }
 #features-box .col-6 {
-  border-right: 1px solid #333;
-  
+  border-right: 1px solid #333;  
+}
+.body-dashboard button, .body-dashboard #features-box {
+  display: none;
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -309,7 +314,8 @@ $('#leave-team').click(function(e){
     $('#left-team').hide();
     $('#left-list').show();
     $('#right-team').hide();
-    $('#right-list').show();
+    $('#right-list').show();    
+    $('#features-box').hide();
 });
 
 var get_team_members = function(team_id){
@@ -377,10 +383,10 @@ var enter_team = function(team_id) {
     current_team_id = team_id;
 
     $('#member-list').html('');
-
     $('#left-team').show();
     $('#left-list').hide();
     $('#right-team').show();
+    $('#features-box').show();
     $('#right-list').hide();
     $('#team-name').text(teams[team_id]);
     update_view();
@@ -442,7 +448,6 @@ $.get('team.csv', function(content){
         }, 5000);
     } else {
         $('body').addClass('body-people');        
-        $('#team-feature').remove();
     }
     if (viewing_status[1]) {
         enter_team(viewing_status[1]);
