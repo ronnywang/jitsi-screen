@@ -253,6 +253,7 @@ var default_data = {
 };
 var loading_scenes = [1,2,3,4,5,6,7,8];
 var loading_promises = [];
+var message_logs = [];
 for (var id of loading_scenes) {
     loading_promises.push($.get('scenes/' + id + '.html').then(function(text){
         id = text.split("\n")[0];
@@ -1207,6 +1208,7 @@ var onConnected = function() {
                     }
             });
             room.on(JitsiMeetJS.events.conference.MESSAGE_RECEIVED, (id, text, ts) => {
+                    message_logs.push({id: id, text: text, ts: ts});
                     for (var idx in windows) {
                         windows[idx].Jitsi.fire('message_received', {id: id, text: text, ts: ts});
                     }

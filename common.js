@@ -96,6 +96,9 @@ var init_win_env = function(win, preview, event_listener, screen_id){
             }
         }
     };
+    win.Jitsi.getMessageLog = function(){
+        return message_logs;
+    };
     win.Jitsi.getUsers = function(){
         if (preview) {
             var first = true;
