@@ -14,6 +14,14 @@ body {
     float: left;
 }
 
+.center-box {
+    position: relative;
+    width: 19%;
+    height: 19%;
+    border: 1px solid black;
+    float: left;
+}
+
 .team-status .team-name {
     position: absolute;
     color: white;
@@ -32,6 +40,11 @@ body {
 <script type="text/html" id="tmpl-team-status">
 <div class="team-status">
 	<div class="team-name"></div>
+</div>
+</script>
+<script type="text/html" id="tmpl-center-box">
+<div class="center-box">
+我是中間
 </div>
 </script>
 <script>
@@ -53,11 +66,16 @@ var update_user = function(){
 };
 
 $.get('team.csv', function(content){
+    var c = 0;
     content.split("\n").map(function(line){
         if (line == '') return;
         var terms = line.split('|');
         if (terms[0] != 'team') return;
         teams[terms[1]] = terms[2];
+        c ++;
+        if (c == 13) {
+            $('#main').append($('#tmpl-center-box').html());
+        }
 		var dom = $($('#tmpl-team-status').html());
         $('.team-name', dom).text(terms[2]);
         dom.attr('id', 'team-status-' + terms[1]);
