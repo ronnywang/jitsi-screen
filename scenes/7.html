@@ -17,7 +17,7 @@ body {
 }
 .body-people {
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .body-people #team-feature, .body-people #features-box {
   display: none;
@@ -37,6 +37,20 @@ button {
     background-repeat: no-repeat;
     background-position: center center;
     background-size: contain;
+}
+#img-footer {
+    position: absolute;
+    z-index: -999;
+    bottom: 0;
+    height: 110%;
+    width: 110%;
+    margin-left: -15px;
+    margin-right: -15px;
+    background-image: url('assets/img/footer.png?v=1');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    filter: brightness(25%);
 }
 #left-list .team-box{
     height: 85px;
@@ -105,18 +119,41 @@ button {
   overflow-x: hidden;
   overflow-y: auto;
 }
-#team-log {
-  margin-top: 50px;
-  height: 400px;
+.log-box {
+  padding: 5px;
   outline: 1px solid #AAA;
   overflow-x: hidden;
   overflow-y: auto;
+  overflow-wrap: break-word;  
 }
+.log-box .content {
+  color: #FF6;
+}
+.log-box .time {
+  color: #3fa3b5;
+}
+#team-log {
+  margin-top: 50px;
+  height: 400px;
+}
+#team-log-2 {
+  height: 240px;
+}
+.body-team #team-log-2 .team {
+  display: none;
+}
+.body-people .help-message .people {
+  display: none;
+}
+.body-team .help-message .people-you, .body-dashboard .help-message .people-you {
+  display: none;
+}
+
 select {
   margin: 5px 0;
 }
-#help-form input {
-    width: 80%;
+#help-form input, #reply-form input {
+    width: 75%;
     background-color: rgba(255,255,255,0.1);
     color: white;
     border: 1px solid white;
@@ -130,6 +167,16 @@ select {
 }
 .body-dashboard button, .body-dashboard #features-box {
   display: none;
+}
+
+@keyframes blink-keyframes
+{
+  0% {color: #FFF;}
+  100% {color: #F00;}
+}
+
+.blinking {
+  animation: blink-keyframes 1s ease 0s infinite alternate;
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -182,13 +229,17 @@ select {
               </div>
               <button id="enter-team">加入討論</button>
             </div>          
-            <div id="team-log"></div>
+            <div id="team-log" class="log-box"></div>
         </div>
     </div><!-- #col-right -->
 </div><!-- .row -->
 <div class="row" id="features-box">
     <div class="col-6">
       <div id="people-feature"><!-- 團隊沒有的功能 -->
+          <form id="reply-form">
+              <input type="text" name="content"><br>
+              <button type="submit">送出</button>
+          </form>
           <button id="leave-team">離開這團隊</button>
           <i class="fas microphone-stat fa-microphone-alt-slash"></i>
           <i class="fas video-stat fa-video"></i>
@@ -209,13 +260,13 @@ select {
           </form>
       </div>
     </div>
-    <div class="col-6" id="team-log-2">
-    </div>
+    <div class="col-5 log-box" id="team-log-2"></div>
 </div>
 </div><!-- .container-fluid -->
+<div id="img-footer"></div>
 <script type="text/html" id="tmpl-help-message">
 <div class="help-message">
-<span class="time">[14:23:32]</span> <span class="team">揪松團</span> 與 <span class="people">專家王小明</span> 求助：「<span class="content">來救我</span>」
+<span class="time">[14:23:32]</span> <span class="team">揪松團</span> 與 <span class="people">專家王小明</span><span class="people-you">您</span> 求助：<span class="content">來救我</span>
 </div>
 </script>
 <script>
@@ -314,6 +365,7 @@ $('#enter-team').click(function(e){
     var team_id = $('#enter-team').data('team_id');
     Jitsi.updateProperty('viewing_team', team_id);
     enter_team(team_id);
+    $(`#team-box-${team_id} .team-name`).removeClass('blinking');
 });
 
 $('#leave-team').click(function(e){
@@ -395,7 +447,7 @@ var enter_team = function(team_id) {
     $('#left-team').show();
     $('#left-list').hide();
     $('#right-team').show();
-    $('#features-box').show();
+    $('#features-box').css('display', 'flex');
     $('#right-list').hide();
     $('#team-name').text(teams[team_id]);
     update_view();
@@ -429,16 +481,24 @@ var process_message = function(text){
     }
     var help_message = $($('#tmpl-help-message').html());
     var t = new Date(data.time);
-    $('.time', help_message).text('[' + [
+    var time_string = [
             ('00' + t.getHours()).slice(-2),
             ('00' + t.getMinutes()).slice(-2),
             ('00' + t.getSeconds()).slice(-2),
-            ].join(':') + ']');
+            ].join(':');
+    $('.time', help_message).text('[' + time_string + ']');
     $('.team', help_message).text(teams[data.from_team_id]);
     $('.people', help_message).text(people[data.to_people_id]);
     $('.content', help_message).text(data.content);
-    $('#team-log-2').append(help_message.clone());
-    $('#team-log').append(help_message.clone());
+    $('#team-log-2').prepend(help_message.clone());
+    $('#team-log').prepend(help_message.clone());
+    if(data.time >= Date.now()-60000)
+    {
+      $(`#team-box-${data.from_team_id} .team-name`).addClass('blinking');
+      window.setTimeout(function() {
+        $(`.body-dashboard #team-box-${data.from_team_id} .team-name`).removeClass('blinking');
+      }, 60000);
+    }
 };
 
 $.get('team.csv', function(content){

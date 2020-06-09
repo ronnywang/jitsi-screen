@@ -27,52 +27,64 @@ div {
     background-color: rgba(0,0,0,0.5);
 }
 #img-footer {
+    position: absolute;
     z-index: -999;
     bottom: 0;
-    height: 100%;
-    width: 100%;
+    height: 110%;
+    width: 110%;
+    margin-left: -15px;
+    margin-right: -15px;
     background-image: url('assets/img/footer.png?v=1');
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
-    filter: brightness(30%);
+    filter: brightness(25%);
 }
 #pc-video {
     left: 10px;
     top: 70px;
-    width: 1120px;
-    height: 630px;
+    width: 1040px;
+    height: 585px;
 }
 #live-video {
-    right: 10px;
+    left: 950px;
     top: 600px;
     width: 320px;
     height: 180px;
 }
 #team-title-left {
-    font-size: 1.5rem;
-    top: 750px;
-    left: 30px;
+    font-size: 2rem;
+    top: 720px;
+    left: 10px;
 }
 .team-status {  
     outline: 1px solid #4D4398;
 }
 #team-video {
-    top: 200px;
-    left: 30px;
-    width: 600px;
-    height: 337px;
+    top: 420px;
+    left: 950px;
+    width: 320px;
+    height: 180px;
 }
 .video-box {
   box-shadow: 5px 5px 5px rgba(30,30,30,0.5);
+}
+.video-box a {
+  font-size: 1.2rem;
+  background-color: rgba(0,0,0,0.5);
+  color: white;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 99999;
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <div id="title-logo"></div>
 <div class="video-box" data-id="pc" data-select="true" id="pc-video"></div>
-<div class="video-box" data-id="live" data-select="true" id="live-video"></div>
+<div class="video-box" data-id="liveA3" data-select="true" id="live-video"><a>A3戰情室現場</a></div>
 <div id="team-title-left"></div>
-<div class="video-box" data-id="team" data-select="true" id="team-video" style="opacity: 0"></div>
+<div class="video-box" data-id="teamA6" data-select="true" id="team-video"><a>A6團隊現場</a></div>
 <div id="img-footer"></div>
 <script>
 Jitsi.on('user_box_updated', function(){
@@ -90,16 +102,18 @@ Jitsi.on('user_box_updated', function(){
 Jitsi.addAction('切雙畫面', function() {
     $('#title-logo').animate({ top: 30, height: 100 }, 1000);
     $('#team-title-left').animate({ top: 550 }, 1000);
-    $('#live-video').animate({ top: 200, right: 30, width: 600, height: 337 }, 1000);
+    $('#live-video').animate({ top: 200, left: 650, width: 600, height: 337 }, 1000);
+    $('#team-video').animate({ top: 200, left: 30, width: 600, height: 337 }, 1000);
     $('#pc-video').animate({ opacity: 0 }, 1000);
-    $('#team-video').animate({ opacity: 1 }, 1000);
+    $('.video-box a').animate({ opacity: 0 }, 1000);
 });
 
 Jitsi.addAction('切單畫面', function() {
     $('#title-logo').animate({ top: 10, height: 50 }, 1000);
     $('#team-title-left').animate({ top: 750 }, 1000);
-    $('#live-video').animate({ top: 600, right: 10, width: 320, height: 180 }, 1000);
+    $('#live-video').animate({ top: 600, left: 950, width: 320, height: 180 }, 1000);
+    $('#team-video').animate({ top: 420, left: 950, width: 320, height: 180 }, 1000);
     $('#pc-video').animate({ opacity: 1 }, 1000);
-    $('#team-video').animate({ opacity: 0 }, 1000);
+    $('.video-box a').animate({ opacity: 1 }, 1000);
 });
 </script>

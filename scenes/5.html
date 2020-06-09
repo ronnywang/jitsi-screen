@@ -14,7 +14,20 @@ body {
 div {
     position: absolute;
 }
-
+#img-footer {
+    position: absolute;
+    z-index: -999;
+    bottom: 0;
+    height: 110%;
+    width: 110%;
+    margin-left: -15px;
+    margin-right: -15px;
+    background-image: url('assets/img/footer.png?v=1');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    filter: brightness(25%);
+}
 #title-logo {
     top: 10px;
     height: 50px;
@@ -42,7 +55,7 @@ div {
 #president-title-left {
     font-size: 1.2rem;
     top: 550px;
-    left: 30px;
+    left: 40px;
     opacity: 0;
 }
 .team-status {  
@@ -50,13 +63,13 @@ div {
 }
 #viewer-video {
     top: 200px;
-    left: 630px;
+    left: 640px;
     width: 600px;
     height: 337px;
 }
 #viewer-title {
     top: 550px;
-    left: 630px;
+    left: 640px;
     font-size: 1.2rem;
 }
 .team-name {
@@ -76,6 +89,7 @@ div {
 <div id="president-title-left">中華民國總統 蔡英文</div>
 <div class="team-box video-box" data-id="2" data-select="true" id="viewer-video" style="opacity: 0"></div>
 <div id="viewer-title" class="team-box" style="opacity: 0">團隊：</div>
+<div id="img-footer"></div>
 <script type="text/html" id="tmpl-team-status">
 <div class="team-status">
 	<div class="team-name"></div>
@@ -98,7 +112,7 @@ $.get('team.csv', function(content){
 Jitsi.addAction('切獨照', function() {
     $('#president-title').animate({ opacity: 0 }, 1000);
     $('#president-title-left').animate({ opacity: 1 }, 1000);
-    $('#president-video').animate({ top: 200, left: 30, width: 600, height: 337, }, 1000, function(){
+    $('#president-video').animate({ top: 200, left: 40, width: 600, height: 337, }, 1000, function(){
         $('.team-box').animate({ opacity: 1 });
     });
 });

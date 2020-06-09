@@ -16,6 +16,20 @@ body {
     outline: 1px solid #4D4398;
     float: left;
 }
+#img-footer {
+    position: absolute;
+    z-index: -999;
+    bottom: 0;
+    height: 110%;
+    width: 110%;
+    margin-left: -15px;
+    margin-right: -15px;
+    background-image: url('assets/img/footer.png?v=1');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    filter: brightness(25%);
+}
 
 .center-box {
     background-image: url('assets/img/logo_big.jpg');
@@ -53,6 +67,8 @@ body {
 <script type="text/html" id="tmpl-center-box">
 <div class="center-box">
 </div>
+
+<div id="img-footer"></div>
 </script>
 <script>
 var teams = {};
