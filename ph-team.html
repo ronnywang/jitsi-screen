@@ -191,6 +191,7 @@ var update_screen_video = function(){
             var old_track = video_dom[0].__track;
             if (old_track) {
                 old_track.detach(video_dom[0]);
+                delete(video_dom[0].__track);
             }
             video_dom.hide();
         } else if (user_id == 'viewer') {
@@ -198,6 +199,7 @@ var update_screen_video = function(){
             var old_track = video_dom[0].__track;
             if (old_track) {
                 old_track.detach(video_dom[0]);
+                delete(video_dom[0].__track);
             }
             video_dom.show();
             if (track) {
@@ -211,6 +213,7 @@ var update_screen_video = function(){
                 var old_track = video_dom[0].__track;
                 if (old_track) {
                     old_track.detach(video_dom[0]);
+                    delete(video_dom[0].__track);
                 }
                 video_dom.show();
                 track.attach(video_dom[0]);
@@ -234,6 +237,7 @@ var update_screen_video = function(){
             var old_track = video_dom[0].__track;
             if (old_track && (tracks.length == 0 || old_track.ssrc != tracks[0].ssrc || old_track.deviceId != tracks[0].deviceId)) {
                 old_track.detach(video_dom[0]);
+                delete(video_dom[0].__track);
             }
             if (tracks.length) {
                 if (!old_track || old_track.ssrc != tracks[0].ssrc || old_track.deviceId != tracks[0].deviceId) {
