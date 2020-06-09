@@ -270,6 +270,11 @@ select {
 <span class="time">[14:23:32]</span> <span class="team">揪松團</span> 與 <span class="people">專家王小明</span><span class="people-you">您</span> 求助：<span class="content">來救我</span>
 </div>
 </script>
+<script type="text/html" id="tmpl-reply-message">
+<div class="help-message">
+<span class="time">[14:23:32]</span> <span class="people">專家王小明</span><span class="people-you">您</span> 回應 <span class="team">揪松團</span>：<span class="content">來救我</span>
+</div>
+</script>
 <script>
 var teams;
 var people;
@@ -470,35 +475,64 @@ var process_message = function(text){
 
     var my_id = Jitsi.getMyID();
     var my_data = Jitsi.getUser(my_id);
-    if (!my_data || !my_data.properties || !my_data.properties.user) {
-    } else {
-        var terms = my_data.properties.user.split('-');
-        if (terms[0] == 'dashboard') {
-        } else if (terms[0] == 'people' && terms[1] != data.to_people_id) {
-            return;
-        } else if (terms[0] == 'team' && terms[1] != data.from_team_id) {
-            return;
-        }
-    }
-    var help_message = $($('#tmpl-help-message').html());
-    var t = new Date(data.time);
-    var time_string = [
-            ('00' + t.getHours()).slice(-2),
-            ('00' + t.getMinutes()).slice(-2),
-            ('00' + t.getSeconds()).slice(-2),
-            ].join(':');
-    $('.time', help_message).text('[' + time_string + ']');
-    $('.team', help_message).text(teams[data.from_team_id]);
-    $('.people', help_message).text(people[data.to_people_id]);
-    $('.content', help_message).text(data.content);
-    $('#team-log-2').prepend(help_message.clone());
-    $('#team-log').prepend(help_message.clone());
-    if(data.time >= Date.now()-60000)
+    if(data.type == 'help')
     {
-      $(`#team-box-${data.from_team_id} .team-name`).addClass('blinking');
-      window.setTimeout(function() {
-        $(`.body-dashboard #team-box-${data.from_team_id} .team-name`).removeClass('blinking');
-      }, 60000);
+      if (!my_data || !my_data.properties || !my_data.properties.user) {
+      } else {
+          var terms = my_data.properties.user.split('-');
+          if (terms[0] == 'dashboard') {
+          } else if (terms[0] == 'people' && terms[1] != data.to_people_id) {
+              return;
+          } else if (terms[0] == 'team' && terms[1] != data.from_team_id) {
+              return;
+          }
+      }
+      var help_message = $($('#tmpl-help-message').html());
+      var t = new Date(data.time);
+      var time_string = [
+              ('00' + t.getHours()).slice(-2),
+              ('00' + t.getMinutes()).slice(-2),
+              ('00' + t.getSeconds()).slice(-2),
+              ].join(':');
+      $('.time', help_message).text('[' + time_string + ']');
+      $('.team', help_message).text(teams[data.from_team_id]);
+      $('.people', help_message).text(people[data.to_people_id]);
+      $('.content', help_message).text(data.content);
+      $('#team-log-2').prepend(help_message.clone());
+      $('#team-log').prepend(help_message.clone());
+      if(data.time >= Date.now()-60000)
+      {
+        $(`#team-box-${data.from_team_id} .team-name`).addClass('blinking');
+        window.setTimeout(function() {
+          $(`.body-dashboard #team-box-${data.from_team_id} .team-name`).removeClass('blinking');
+        }, 60000);
+      }
+    }
+    else
+    {
+      if (!my_data || !my_data.properties || !my_data.properties.user) {
+      } else {
+          var terms = my_data.properties.user.split('-');
+          if (terms[0] == 'dashboard') {
+          } else if (terms[0] == 'people' && terms[1] != data.from_people_id) {
+              return;
+          } else if (terms[0] == 'team' && terms[1] != data.to_team_id) {
+              return;
+          }                    
+      }
+      var help_message = $($('#tmpl-reply-message').html());
+      var t = new Date(data.time);
+      var time_string = [
+              ('00' + t.getHours()).slice(-2),
+              ('00' + t.getMinutes()).slice(-2),
+              ('00' + t.getSeconds()).slice(-2),
+              ].join(':');
+      $('.time', help_message).text('[' + time_string + ']');
+      $('.team', help_message).text(teams[data.to_team_id]);
+      $('.people', help_message).text(people[data.from_people_id]);
+      $('.content', help_message).text(data.content);
+      $('#team-log-2').prepend(help_message.clone());
+      $('#team-log').prepend(help_message.clone());
     }
 };
 
@@ -582,6 +616,26 @@ $('#help-form').submit(function(e){
     message.time = (new Date).getTime();
     message.to_people_id = $('#help-form [name="people"]').val();
     message.content = $('#help-form [name="content"]').val();
+    if(message.content.length > 0) {
+      Jitsi.sendTextMessage(JSON.stringify(message));
+    }
+});
+
+$('#reply-form').submit(function(e){
+    var my_id = Jitsi.getMyID();
+    var my_data = Jitsi.getUser(my_id);
+    var my_people_id = 0;
+    if (!my_data || !my_data.properties || !my_data.properties.user) {
+    } else {
+        var terms = my_data.properties.user.split('-');
+        my_people_id = terms[1];
+    }
+    e.preventDefault();
+    message = {type: 'reply'};
+    message.to_team_id = current_team_id;
+    message.time = (new Date).getTime();
+    message.from_people_id = my_people_id;
+    message.content = $('#reply-form [name="content"]').val();
     if(message.content.length > 0) {
       Jitsi.sendTextMessage(JSON.stringify(message));
     }
