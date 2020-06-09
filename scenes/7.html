@@ -581,7 +581,9 @@ $('#help-form').submit(function(e){
     message.time = (new Date).getTime();
     message.to_people_id = $('#help-form [name="people"]').val();
     message.content = $('#help-form [name="content"]').val();
-    Jitsi.sendTextMessage(JSON.stringify(message));
+    if(message.content.length > 0) {
+      Jitsi.sendTextMessage(JSON.stringify(message));
+    }
 });
 
 Jitsi.on('user_joined', update_view);
