@@ -80,6 +80,7 @@ div {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <div id="title-logo"></div>
 <div class="video-box" data-id="pc" data-select="true" id="pc-video"></div>
 <div class="video-box" data-id="liveA3" data-select="true" id="live-video"><a>A3戰情室現場</a></div>
@@ -115,5 +116,29 @@ Jitsi.addAction('切單畫面', function() {
     $('#team-video').animate({ top: 420, left: 950, width: 320, height: 180 }, 1000);
     $('#pc-video').animate({ opacity: 1 }, 1000);
     $('.video-box a').animate({ opacity: 1 }, 1000);
+});
+
+Jitsi.addAction('拍截圖', function() {
+    var idx = 0;
+    $('.video-box').each(function(){
+        idx ++;
+        var canvas = document.createElement('canvas');
+        var video_dom = $('video', this);
+        canvas.width = video_dom.width();
+        canvas.height = video_dom.height();
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(video_dom[0], 0, 0, canvas.width, canvas.height);
+        $(this).css('background-image', 'url(\'' + canvas.toDataURL() + '\')');
+    });
+    
+    html2canvas($('body')[0]).then(canvas => {
+        var link = document.createElement('a');
+        link.download = 'picture.png';
+        link.href = canvas.toDataURL()
+        link.click();
+        $('.video-box').each(function(){
+            $(this).css('background-image', '');
+        });
+    });
 });
 </script>
