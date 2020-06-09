@@ -24,11 +24,11 @@ body {
     width: 110%;
     margin-left: -15px;
     margin-right: -15px;
-    background-image: url('assets/img/footer.png?v=1');
+    background-image: url('assets/img/footer_dark.jpg?v=1');
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
-    filter: brightness(25%);
+    
 }
 
 .center-box {
@@ -39,7 +39,7 @@ body {
     position: relative;
     width: 20%;
     height: 20%;
-    outline: 1px solid black;
+    outline: 1px solid #4D4398;
     float: left;
 }
 
@@ -96,13 +96,13 @@ $.get('team.csv', function(content){
         if (terms[0] != 'team') return;
         teams[terms[1]] = terms[2];
         c ++;
-        if (c == 13) {
-            $('#main').append($('#tmpl-center-box').html());
-        }
-		var dom = $($('#tmpl-team-status').html());
+        var dom = $($('#tmpl-team-status').html());
         $('.team-name', dom).text(terms[2]);
         dom.attr('id', 'team-status-' + terms[1]);
         $('#main').append(dom);
+        if (c == 24) {
+            $('#main').append($('#tmpl-center-box').html());
+        }
     });
 
     Jitsi.on('user_joined', function(user){
