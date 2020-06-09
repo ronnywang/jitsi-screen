@@ -913,11 +913,11 @@ var update_screen_video = function(){
                 }
 
                 var old_track = video_dom[0].__track;
-                if (old_track && (tracks.length == 0 || old_track.ssrc != tracks[0].ssrc)) {
+                if (old_track && (tracks.length == 0 || old_track.ssrc != tracks[0].ssrc || old_track.deviceId != tracks[0].deviceId)) {
                     old_track.detach(video_dom[0]);
                 }
                 if (tracks.length) {
-                    if (!old_track || old_track.ssrc != tracks[0].ssrc) {
+                    if (!old_track || old_track.ssrc != tracks[0].ssrc || old_track.deviceId != tracks[0].deviceId) {
                         tracks[0].attach(video_dom[0]);
                     }
                     if ($(this).attr('data-select') == 'true') {
