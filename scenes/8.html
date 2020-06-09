@@ -131,7 +131,7 @@ Jitsi.addAction('拍截圖', function() {
         $(this).css('background-image', 'url(\'' + canvas.toDataURL() + '\')');
     });
     
-    html2canvas($('body')[0]).then(canvas => {
+    html2canvas($('body')[0], {width: 1280, height: 800}).then(canvas => {
         var link = document.createElement('a');
         link.download = 'picture.png';
         link.href = canvas.toDataURL()
