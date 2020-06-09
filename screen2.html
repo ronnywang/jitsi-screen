@@ -791,7 +791,8 @@ $('#screen-choose-body-area').on('click', '.btn-add-viewer', function(e){
         }
     }
     current_data.screens[screen_id].viewers = $('.btn-delete-viewer', box_dom).map(function(a){ return $(this).data('viewer'); }).toArray()
-    if (room) {
+    if (room && has_scene_to_response()) {
+        console.log('broadcast scenes to all viewers');
         room.broadcastEndpointMessage({type: 'update_scene', message: {current_data: current_data}});
     }
 });
@@ -1138,6 +1139,18 @@ var update_devices = function(tracks) {
     update_user_list();
 };
 
+var has_scene_to_response = function() {
+    if (current_data.screens.length == 0) {
+        return false;
+    }
+    for (var screen_id in current_data.screens) {
+        if (current_data.screens[screen_id].viewers.length) {
+            return true;
+        }
+    }
+    return false;
+};
+
 var onConnected = function() {
     var confOptions = {
         openBridgeChannel: true,
@@ -1180,9 +1193,14 @@ var onConnected = function() {
 
             room.on(JitsiMeetJS.events.conference.ENDPOINT_MESSAGE_RECEIVED, (participant, message) => {
                     if (message.type == 'request_scene') {
-                        room.sendEndpointMessage(participant.getId(), {type: 'response_scene', message: {
-                                current_data: current_data
-                        }});
+                        if (has_scene_to_response()) {
+                            console.log('User ' + participant.getId() + ' requested scenes, responsed');
+                            room.sendEndpointMessage(participant.getId(), {type: 'response_scene', message: {
+                                    current_data: current_data
+                            }});
+                        } else {
+                            console.log('User ' + participant.getId() + ' requested scenes, no scene to response');
+                        }
                     }
             });
 
