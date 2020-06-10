@@ -1018,7 +1018,7 @@ var update_user_list = function(){
             if (audio_track && !$(`#audio-${id}`).length) {
                 var audio_dom = $('<audio autoplay="1"></audio>').attr('id', 'audio-' + id);
                 $('#user-list').append(audio_dom);
-                audio_track.attach(audio_dom[0]);
+                //audio_track.attach(audio_dom[0]);
             }
             var audio_dom = $(`#audio-${id}`)[0];
             if (audio_dom && audio_dom.muted) {
@@ -1175,7 +1175,7 @@ var onConnected = function() {
 
                 audio_track = room.participants[id].getTracksByMediaType('audio')[0];
                 if (audio_track) {
-                    audio_track.attach(audio_dom[0]);
+                    //audio_track.attach(audio_dom[0]);
                 }
             }
             update_user_list();
@@ -1244,7 +1244,7 @@ var onConnected = function() {
             });
             room.on(JitsiMeetJS.events.conference.TRACK_ADDED, (track) => {
                     if (track.type == 'audio' && track.ownerEndpointId && $('#audio-' + track.ownerEndpointId).length) {
-                        track.attach($('#audio-' + track.ownerEndpointId)[0]);
+                        //track.attach($('#audio-' + track.ownerEndpointId)[0]);
                     }
                     for (var idx in windows) {
                         windows[idx].Jitsi.fire('track_added', {track: track});
