@@ -169,6 +169,21 @@ var video_detach = function(video_box_dom, track){
     video_dom.hide();
 };
 
+var audio_detach = function(audio_box_dom, track){
+    var audio_dom = $('audio', audio_box_dom);
+    track.detach(audio_dom[0]);
+    $(audio_box_dom).addClass('no-audio');
+    delete(audio_dom[0].__track);
+};
+
+var audio_attach = function(audio_box_dom, track){
+    var audio_dom = $('audio', audio_box_dom);
+    track.attach(audio_dom[0]);
+    $(audio_box_dom).removeClass('no-audio');
+    audio_dom[0].__track = track;
+    audio_dom[0].play().catch(function(e){ restore_inactive_track(); });
+};
+
 var video_attach = function(video_box_dom, track){
     var video_dom = $('video', video_box_dom);
     video_dom.show();
