@@ -562,7 +562,7 @@ function get_local_audio_track(device_id, callback) {
         callback(local_tracks['a' + device_id]);
         return;
     }
-    JitsiMeetJS.createLocalTracks({ devices: [ 'audio' ], cameraDeviceId: device_id })
+    JitsiMeetJS.createLocalTracks({ devices: [ 'audio' ], micDeviceId: device_id })
     .then(function(tracks){
         local_tracks['a' + device_id] = tracks[0];
         tracks[0].addEventListener(JitsiMeetJS.events.track.TRACK_AUDIO_LEVEL_CHANGED, function(audioLevel) {
