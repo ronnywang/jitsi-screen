@@ -161,6 +161,13 @@ var reselected_users = function(){
 };
 var selected_users = {};
 
+var video_detach = function(video_box_dom, track){
+    var video_dom = $('video', video_box_dom);
+    track.detach(video_dom[0]);
+    $(video_box_dom).addClass('no-video');
+    delete(video_dom[0].__track);
+};
+
 var restore_inactive_track = function(){
     for (var id in room.participants) {
         var status = room.participantConnectionStatus.connectionStatusMap[id];
