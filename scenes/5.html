@@ -140,32 +140,32 @@ window.addEventListener('keyup', function(e){
 			c ++;
 		}
 
-        var wait_time = 100;
-        var d = Promise.resolve();
-        d = d.then(_ => new Promise(resolve => {
-            $('#president-video').animate({width: 244, height: 135, top: 70+135*2, left: 30+244*2}, 1000, resolve);
-        }));
+        $('#president-video').animate({width: 244, height: 135, top: 70+135*2, left: 30+244*2}, 1000);
+        c = 0;
         for (let id in anime_config) {
             let ac = anime_config[id];
+            c ++;
 
-            d = d.then(_ => new Promise(resolve => {
+            setTimeout(function(){
                 $('#animate-' + id).animate({ // 移動文字到定點
                     left: ac[4]*244+30-ac[2]/2,
                     top: ac[5]*135+70-ac[3]/2,
-                }, wait_time, resolve);
-            }));
+                }, 2000);
+            }, 1000 + 200 * c );
 
-            d = d.then(_ => new Promise(resolve => {
+            setTimeout(function(){
                 $('#animate-' + id).animate({ // 文字消失同時影像出來
                     opacity: 0
-                }, wait_time, resolve);
+                }, 2000);
+            }, 1000 + 2000 + 200 * c);
 
+            setTimeout(function(){
                 ac[6].map(function(id){ // 文字消失同時影像出來
                     $('#team-status-' + team_map[id]).animate({
                         opacity: 1
-                    }, wait_time);
+                    }, 2000);
                 });
-            }));
+            }, 1000 + 2000 + 200 * c);
         }
 
 		x ++;
