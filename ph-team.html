@@ -292,13 +292,11 @@ $('#output-audio').change(function(){
         if (track.getType() != 'audio') continue;
         promises.push(room.removeTrack(track));
     }
-    $(`#user-list-${room.myUserId()} .microphone-stat`).removeClass('fa-microphone-alt').addClass('fa-microphone-alt-slash');
 
     Promise.all(promises).then(function(){
         if ('none' == id) {
         } else {
             get_local_audio_track(id, function(track){
-                $(`#user-list-${room.myUserId()} .microphone-stat`).removeClass('fa-microphone-alt-slash').addClass('fa-microphone-alt');
                 room.addTrack(track);
             });
         }
