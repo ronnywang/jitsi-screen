@@ -169,7 +169,7 @@ var anime_final = function(){
         }
         if (user.properties['user'].match('^team-')) {
             var team_id = user.properties['user'].split('-')[1];
-            $('#team-status-' + team_id).attr('data-user', user.id).addClass('video-box').css('background-image', '');
+            $('#team-status-' + team_id).attr('data-user', user.id).addClass('video-box').css('background-image', '').addClass('audio-mute');
         }
     }
     Jitsi.reload();
