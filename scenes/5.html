@@ -153,6 +153,10 @@ var anime_final = function(){
             top: 70 + Math.floor(c / 5) * 135,
             left: 30 + (c % 5) * 244,
             opacity: 0,
+            'background-image': 'url(\'assets/img/avatars/team-' + id + '.png\')',
+            'background-size': 'contain',
+            'background-repeat': 'no-repeat',
+            'background-position': 'center',
         });
         dom.addClass('team-video-box');
         $('body').append(dom);
@@ -165,7 +169,7 @@ var anime_final = function(){
         }
         if (user.properties['user'].match('^team-')) {
             var team_id = user.properties['user'].split('-')[1];
-            $('#team-status-' + team_id).attr('data-user', user.id).addClass('video-box');
+            $('#team-status-' + team_id).attr('data-user', user.id).addClass('video-box').css('background-image', '');
         }
     }
     Jitsi.reload();
