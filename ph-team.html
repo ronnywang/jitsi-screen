@@ -465,15 +465,11 @@ var onConnected = function() {
 					popup_window.Jitsi.fire('user_left', {id: id, name: user.getDisplayName()});
             });
             room.on(JitsiMeetJS.events.conference.TRACK_ADDED, (track) => {
-                    if (track.type == 'audio' && track.ownerEndpointId && $('#audio-' + track.ownerEndpointId).length) {
-                        track.attach($('#audio-' + track.ownerEndpointId)[0]);
-                    }
+                    update_screen_video();
                     popup_window.Jitsi.fire('track_added', {track: track});
             });
             room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, (track) => {
-                    if (track.type == 'audio' && track.ownerEndpointId && $('#audio-' + track.ownerEndpointId).length) {
-                        track.detach($('#audio-' + track.ownerEndpointId)[0]);
-                    }
+                    update_screen_video();
                     popup_window.Jitsi.fire('track_removed', {track: track});
             });
             room.on(JitsiMeetJS.events.conference.TRACK_MUTE_CHANGED, (track) => {
