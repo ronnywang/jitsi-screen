@@ -378,6 +378,9 @@ $('#leave-team').click(function(e){
     e.preventDefault();
     Jitsi.updateProperty('viewing_team', 0);
     current_team_id = 0;
+    $('.member-box').remove();
+    $('#main-video').attr('data-user', '');
+    Jitsi.reload();
     $('#left-team').hide();
     $('#left-list').show();
     $('#right-team').hide();
