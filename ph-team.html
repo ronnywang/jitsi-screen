@@ -240,6 +240,9 @@ var update_screen_video = function(){
             } else if ('undefined' !== typeof(room.participants[user_id])) {
                 var tracks = room.participants[user_id].getTracksByMediaType('video');
                 audio_track = room.participants[user_id].getTracksByMediaType('audio')[0];
+                if ($(this).is('.audio-mute')) {
+                    audio_track = null;
+                }
             } else {
                 var old_track = video_dom[0].__track;
                 if (old_track) {
