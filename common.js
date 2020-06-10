@@ -166,6 +166,16 @@ var video_detach = function(video_box_dom, track){
     track.detach(video_dom[0]);
     $(video_box_dom).addClass('no-video');
     delete(video_dom[0].__track);
+    video_dom.hide();
+};
+
+var video_attach = function(video_box_dom, track){
+    var video_dom = $('video', video_box_dom);
+    video_dom.show();
+    track.attach(video_dom[0]);
+    $(video_box_dom).removeClass('no-video');
+    video_dom[0].__track = track;
+    video_dom[0].play().catch(function(e){ restore_inactive_track(); });
 };
 
 var restore_inactive_track = function(){
