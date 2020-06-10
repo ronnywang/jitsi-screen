@@ -116,6 +116,7 @@ var anime_config = [
 
 var x = 0;
 var anime_word = function(){
+    if (x >= anime_config.length) return;
     var audio_dom = $('<audio></audio>');
     audio_dom[0].src = 'assets/sound/click.mp3';
     audio_dom[0].play();
