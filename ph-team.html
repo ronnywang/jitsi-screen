@@ -167,7 +167,7 @@ var update_screen_video = function(){
             delete(selected_users[id]);
         }
     }
-    if (!current_data.screens) {
+    if (!current_data || !current_data.screens) {
         return;
     }
     var user_select = {};
