@@ -266,7 +266,7 @@ var update_screen_video = function(){
             }
 
             var old_track = audio_dom[0].__track;
-            if (old_track && (audio_track && old_track.ssrc != audio_track.ssrc)) {
+            if (old_track && (!audio_track || old_track.ssrc != audio_track.ssrc)) {
                 audio_detach(this, old_track);
             }
             if (audio_track && (!old_track || old_track.ssrc != audio_track.ssrc)) {
