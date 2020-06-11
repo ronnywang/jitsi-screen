@@ -115,64 +115,8 @@ var anime_config = [
 ];
 
 var x = 0;
-window.addEventListener('keyup', function(e){
-    if (x == anime_config.length) {
-		var audio_dom = $('<audio></audio>');
-		audio_dom[0].src = 'assets/sound/click.mp3';
-		audio_dom[0].play();
-		var c = 0;
-        team_map = [];
-		for (var id in teams) {
-			var dom = $($('#tmpl-team-status').html());
-			$('.team-name', dom).text(teams[id]);
-			dom.attr('id', 'team-status-' + id);
-            team_map.push(id);
-			if (c == 12) c ++;
-			dom.css({
-				width: 244,
-				height: 135,
-				top: 70 + Math.floor(c / 5) * 135,
-				left: 30 + (c % 5) * 244,
-				opacity: 0,
-			});
-			dom.addClass('team-video-box');
-			$('body').append(dom);
-			c ++;
-		}
-
-        $('#president-video').animate({width: 244, height: 135, top: 70+135*2, left: 30+244*2}, 1000);
-        c = 0;
-        for (let id in anime_config) {
-            let ac = anime_config[id];
-            c ++;
-
-            setTimeout(function(){
-                $('#animate-' + id).animate({ // 移動文字到定點
-                    left: ac[4]*244+30-ac[2]/2,
-                    top: ac[5]*135+70-ac[3]/2,
-                }, 2000);
-            }, 1000 + 200 * c );
-
-            setTimeout(function(){
-                $('#animate-' + id).animate({ // 文字消失同時影像出來
-                    opacity: 0
-                }, 2000);
-            }, 1000 + 2000 + 200 * c);
-
-            setTimeout(function(){
-                ac[6].map(function(id){ // 文字消失同時影像出來
-                    $('#team-status-' + team_map[id]).animate({
-                        opacity: 1
-                    }, 2000);
-                });
-            }, 1000 + 2000 + 200 * c);
-        }
-
-		x ++;
-		return;
-	} else if (x > anime_config.length) {
-		return;
-	}
+var anime_word = function(){
+    if (x >= anime_config.length) return;
     var audio_dom = $('<audio></audio>');
     audio_dom[0].src = 'assets/sound/click.mp3';
     audio_dom[0].play();
@@ -189,6 +133,101 @@ window.addEventListener('keyup', function(e){
 
 	$('body').append(img_dom);
 	x++;
+};
+
+var anime_final = function(){
+    var audio_dom = $('<audio></audio>');
+    audio_dom[0].src = 'assets/sound/click.mp3';
+    audio_dom[0].play();
+    var c = 0;
+    team_map = [];
+    for (var id in teams) {
+        var dom = $($('#tmpl-team-status').html());
+        $('.team-name', dom).text(teams[id]);
+        dom.attr('id', 'team-status-' + id);
+        team_map.push(id);
+        if (c == 12) c ++;
+        dom.css({
+            width: 244,
+            height: 135,
+            top: 70 + Math.floor(c / 5) * 135,
+            left: 30 + (c % 5) * 244,
+            opacity: 0,
+            'background-image': 'url(\'assets/img/avatars/team-' + id + '.png\')',
+            'background-size': 'contain',
+            'background-repeat': 'no-repeat',
+            'background-position': 'center',
+        });
+        dom.addClass('team-video-box');
+        $('body').append(dom);
+        c ++;
+    }
+    users = Jitsi.getUsers();
+    for (var user of users) {
+        if ('undefined' === typeof(user.properties['user'])) {
+            continue;
+        }
+        if (user.properties['user'].match('^team-')) {
+            var team_id = user.properties['user'].split('-')[1];
+            $('#team-status-' + team_id).attr('data-user', user.id).addClass('video-box').css('background-image', '').addClass('audio-mute');
+        }
+    }
+    Jitsi.reload();
+
+    $('#president-video').animate({width: 244, height: 135, top: 70+135*2, left: 30+244*2}, 1000);
+    c = 0;
+    for (let id in anime_config) {
+        let ac = anime_config[id];
+        c ++;
+
+        setTimeout(function(){
+            $('#animate-' + id).animate({ // 移動文字到定點
+                left: ac[4]*244+30-ac[2]/2,
+                top: ac[5]*135+70-ac[3]/2,
+            }, 2000);
+        }, 1000 + 200 * c );
+
+        setTimeout(function(){
+            $('#animate-' + id).animate({ // 文字消失同時影像出來
+                opacity: 0
+            }, 2000);
+        }, 1000 + 2000 + 200 * c);
+
+        setTimeout(function(){
+            ac[6].map(function(id){ // 文字消失同時影像出來
+                $('#team-status-' + team_map[id]).animate({
+                    opacity: 1
+                }, 2000);
+            });
+        }, 1000 + 2000 + 200 * c);
+    }
+    x ++;
+};
+
+var click = function(e){
+    if (x == anime_config.length && e.code == 'Enter') {
+        Jitsi.sendTextMessage(JSON.stringify({type: 'start', method: 'anime_final'}));
+		return;
+	} else if (x >= anime_config.length) {
+		return;
+	}
+    Jitsi.sendTextMessage(JSON.stringify({type: 'start', method: 'anime_word'}));
+};
+
+Jitsi.on('message_received', function(ret){
+    try {
+        var data = JSON.parse(ret.text);
+    } catch (e) {
+        return;
+    }
+    if (data.type != 'start') {
+        return;
+    }
+    if (data.method == 'anime_word') {
+        anime_word();
+    } else if (data.method == 'anime_final') {
+        anime_final();
+    }
 });
 
 var teams;
@@ -201,6 +240,12 @@ $.get('team.csv', function(content){
         teams[terms[1]] = terms[2];
     });
     $('#viewer-title').text('團隊：' + Jitsi.getUser(Jitsi.getMyID()).name);
+
+    var my_id = Jitsi.getMyID();
+    var my_data = Jitsi.getUser(my_id);
+    if (!my_data || !my_data.properties || !my_data.properties.user || !my_data.properties.user.match('^team')) {
+        window.addEventListener('keyup', click);
+    }
 });
 
 Jitsi.addAction('切獨照', function() {
