@@ -45,29 +45,21 @@ div {
 .video-box {
   outline: 2px solid #14a73c;
 }
-#president-video {
+#main-video {
     top: 70px;
     left: 30px;
     width: 1220px;
     height: 675px;
 }
-.titles {
-    font-size: 1.2rem;
-    outline: 2px solid;
-    background-color: rgba(0,0,0,0.5);
+#speaker-title {
+    font-size: 2rem;
+    background-color: #14a73c;
+    padding: 5px;
     font-weight: bold;
-}
-#president-title {
     outline: 0;
-    width: 1280px;
-    top: 750px;
-    text-align: center;
+    color: white;
+    bottom: 0;
     left: 0;
-}
-#president-title-left {
-    top: 550px;
-    left: 40px;
-    opacity: 0;
 }
 .team-status {  
     outline: 1px solid #4D4398;
@@ -94,10 +86,8 @@ div {
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <div id="title-logo"></div>
-<div class="video-box" data-id="1" data-select="true" id="president-video"></div>
-<div id="president-title" class="titles">中華民國總統 蔡英文</div>
-<div id="president-title-left" class="titles">中華民國總統 蔡英文</div>
-<div class="team-box video-box" data-id="2" data-select="true" id="viewer-video" style="opacity: 0"></div>
+<div class="video-box" data-id="1" data-select="true" id="main-video"><div id="speaker-title">主持人：鄭國威</div></div>
+<!--div class="team-box video-box" data-id="2" data-select="true" id="viewer-video" style="opacity: 0"></div-->
 <div id="viewer-title" class="team-box titles" style="opacity: 0">團隊：</div>
 <div id="img-footer"></div>
 <script type="text/html" id="tmpl-team-status">
@@ -184,9 +174,9 @@ var anime_final = function(){
     }
     Jitsi.reload();
 
-    $('#president-video').animate({width: 244, height: 135, top: 70+135*2, left: 30+244*2}, 1000);
+    $('#main-video').animate({width: 244, height: 135, top: 70+135*2, left: 30+244*2}, 1000);
     c = 0;
-    $('#president-title').animate({opacity: 0},1000);
+    $('#speaker-title').animate({opacity: 0},1000);
     for (let id in anime_config) {
         let ac = anime_config[id];
         c ++;
@@ -258,16 +248,16 @@ $.get('team.csv', function(content){
         window.addEventListener('keyup', click);
     }
 });
-
+/*
 Jitsi.addAction('切獨照', function() {
-    $('#president-title').animate({ opacity: 0 }, 1000);
-    $('#president-title-left').animate({ opacity: 1 }, 1000);
-    $('#president-video').animate({ top: 200, left: 40, width: 600, height: 337, }, 1000, function(){
+    $('#speaker-title').animate({ opacity: 0 }, 1000);
+    $('#speaker-title-left').animate({ opacity: 1 }, 1000);
+    $('#main-video').animate({ top: 200, left: 40, width: 600, height: 337, }, 1000, function(){
         $('.team-box').animate({ opacity: 1 });
     });
 });
+
 Jitsi.addAction('切合照', function() {
-    $('#president-title-left').animate({ opacity: 0 }, 1000);
     var c = 0;
     for (var id in teams) {
 		var dom = $($('#tmpl-team-status').html());
@@ -298,18 +288,37 @@ Jitsi.addAction('切合照', function() {
     Jitsi.reload();
 
     $('.team-box').animate({opacity: 0}, 1000, function(){
-        $('#president-video').animate({width: 244, height: 135, top: 70+135*2, left: 30+244*2}, 1000, function(){
+        $('#main-video').animate({width: 244, height: 135, top: 70+135*2, left: 30+244*2}, 1000, function(){
             $('.team-video-box').animate({opacity: 1});
         });
     });
 });
+
 Jitsi.addAction('回單人', function() {
     $('.team-video-box').animate({opacity: 0}, 1000, function(){
         $('.team-video-box').remove();
         Jitsi.reload();
-        $('#president-video').animate({width: 1220, height: 675, top: 70, left: 30}, 1000, function(){
-            $('#president-title').animate({opacity: 1}, 1000);
+        $('#main-video').animate({width: 1220, height: 675, top: 70, left: 30}, 1000, function(){
+            $('#speaker-title').animate({opacity: 1}, 1000);
         });
     });
+});*/
+var now_title = 0;
+Jitsi.addAction('切換title', function() {
+  now_title++;
+  $("#speaker-title").animate({opacity: 0}, 500, function(){
+      switch(now_title%3) {
+        case 0:
+          $("#speaker-title").text("主持人：鄭國威");
+          break;        
+        case 1:
+          $("#speaker-title").text("李俊俋 副秘書長");
+          break;
+        case 2:
+          $("#speaker-title").text("蔡英文 總統");
+          break;
+      }
+      $("#speaker-title").animate({opacity: 1}, 500);
+  });
 });
 </script>

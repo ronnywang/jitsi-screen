@@ -1,29 +1,90 @@
 6
-團隊提案
+過往團隊報告
 <style>
-#left-part {
-    width: 50%;
-    float: left;
+body {
+    height: 800px;
+    width: 1280px;
+    margin: 0;
+    background-color: #03151D;
+    outline: 1px solid red;
+    font-family: "Open Sans", "微軟正黑體", "Microsoft JhengHei", sans-serif;
+    color: #14a73c;
+    overflow: hidden;
+}
+
+div {
+    position: absolute;
+}
+
+#title-logo {
+    top: 10px;
+    height: 50px;
+    width: 1280px;
+    background-image: url('assets/img/onlylogofont.png?v=1');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+}
+#img-footer {
+    position: absolute;
+    z-index: -999;
+    bottom: 0;
+    height: 110%;
+    width: 110%;
+    margin-left: -15px;
+    margin-right: -15px;
+    background-image: url('assets/img/footer_dark.jpg');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    
+}
+#pc-video {
+    left: 15px;
+    top: 70px;
+    width: 960px;
+    height: 540px;
+}
+#live-video {
+    left: 977px;
+    top: 612px;
+    width: 288px;
+    height: 162px;
+}
+#team-title-left {
+    outline: 2px solid;
+    background-color: rgba(0,0,0,0.5);
+    font-size: 2rem;
+    font-weight: bold;
+    top: 720px;
+    left: 15px;
+}
+.team-status {  
+    outline: 1px solid #4D4398;
+}
+#live-video video {
+  object-fit: cover;
 }
 .video-box {
-    width: 1200px;
-    height: 675px;
+  outline: 2px solid #14a73c;
+}
+.video-box a {
+  font-size: 1.2rem;
+  background-color: rgba(0,0,0,0.5);
+  color: white;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 99999;
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<h1>2020總統盃黑客松</h1>
-<div class="video-box" data-id="1" data-select="true" id="main"></div>
-<span class="title">團隊：</span>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<div id="title-logo"></div>
+<div class="video-box" data-id="pc" data-select="true" id="pc-video"></div>
+<div id="team-title-left">總統盃黑客松過往團隊</div>
+<div class="video-box" data-id="liveA3" data-select="true" id="live-video"><a>A3戰情室現場</a></div>
+<div id="img-footer"></div>
 <script>
-Jitsi.on('user_box_updated', function(){
-    var result_user_id = $('#main').attr('data-result-user');
-    var user = Jitsi.getUser(result_user_id);
-    if (user) {
-        if (user.properties['display-name']) {
-            $('.title').text('團隊：' + user.properties['display-name']);
-        } else {
-            $('.title').text('團隊：' + user.name);
-        }
-    }
-});
+Jitsi.reload();
 </script>
