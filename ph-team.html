@@ -425,7 +425,8 @@ var onConnected = function() {
 
 	height = 1600;
 	width = 1200;
-	popup_window = window.open('', '輸出畫面', config='menubar=no,status=no,toolbar=no,height=' + (height + 100) + ',width=' + (width + 100));
+	popup_window = window.open('', '輸出畫面', config='autoplay=yes,menubar=no,status=no,toolbar=no,height=' + (height + 100) + ',width=' + (width + 100));
+    popup_window.document.write('<h1 onclick="this.remove();">請點我～快</h1>');
     popup_window.Jitsi = {fire: function(){}};
 
     update_devices();
