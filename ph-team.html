@@ -265,9 +265,9 @@ var update_screen_video = function(){
             if (tracks.length) {
                 if (!old_track || old_track.ssrc != tracks[0].ssrc || old_track.deviceId != tracks[0].deviceId) {
                     video_attach(this, tracks[0]);
-                    if ($(this).attr('data-select') == 'true') {
-                        selected_users[user_id] = 'select';
-                    }
+                }
+                if ($(this).attr('data-select') == 'true') {
+                    selected_users[user_id] = 'select';
                 }
             }
 
