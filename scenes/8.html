@@ -137,7 +137,30 @@ Jitsi.addAction('拍截圖', function() {
     });
     
     html2canvas($('body')[0], {width: 1280, height: 800}).then(canvas => {
-        window.download_file('合照.png', canvas.toDataURL());
+        var result_user_id = $('#team-video').attr('data-result-user');
+        var user = Jitsi.getUser(result_user_id);
+        if (user) {
+            if (user.properties['display-name']) {
+                var n = user.properties['display-name'];
+                window.download_file('合照_' + n.replace(' ', '_') + '.png', canvas.toDataURL());
+                if (result_user_id == Jitsi.getMyID()) {
+                    var cam_canvas = document.createElement('canvas');
+                    cam_canvas.width = 1920;
+                    cam_canvas.height = 1080;
+                    var ctx = cam_canvas.getContext('2d');
+                    ctx.drawImage($('#team-video video')[0], 0, 0, 1920, 1080);
+                    window.download_file('合照攝影機_' + n.replace(' ', '_') + '.png', cam_canvas.toDataURL());
+                }
+                if ($('#live-video').attr('data-result-user') == Jitsi.getMyID()) {
+                    var cam_canvas = document.createElement('canvas');
+                    cam_canvas.width = 1920;
+                    cam_canvas.height = 1080;
+                    var ctx = cam_canvas.getContext('2d');
+                    ctx.drawImage($('#live-video video')[0], 0, 0, 1920, 1080);
+                    window.download_file('合照攝影機_' + n.replace(' ', '_') + '.png', cam_canvas.toDataURL());
+                }
+            }
+        }
         $('.video-box').each(function(){
             $(this).css('background-image', '');
         });
