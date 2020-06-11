@@ -541,6 +541,11 @@ var update_content = function(){
         popup_window.document.open();
 		popup_window.document.write(content);
         popup_window.document.title = '彈出視窗: ' + user_name;
+        popup_window.onbeforeunload = function(e){
+            var message = '這個視窗不能關掉喔，關掉你就看不到總統盃黑客松直播了';
+            e.returnValue = message;
+            return message;
+        };
     }
     update_screen_video();
 };
