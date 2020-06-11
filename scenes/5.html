@@ -248,61 +248,6 @@ $.get('team.csv', function(content){
         window.addEventListener('keyup', click);
     }
 });
-/*
-Jitsi.addAction('切獨照', function() {
-    $('#speaker-title').animate({ opacity: 0 }, 1000);
-    $('#speaker-title-left').animate({ opacity: 1 }, 1000);
-    $('#main-video').animate({ top: 200, left: 40, width: 600, height: 337, }, 1000, function(){
-        $('.team-box').animate({ opacity: 1 });
-    });
-});
-
-Jitsi.addAction('切合照', function() {
-    var c = 0;
-    for (var id in teams) {
-		var dom = $($('#tmpl-team-status').html());
-        $('.team-name', dom).text(teams[id]);
-        dom.attr('id', 'team-status-' + id);
-        if (c == 12) c ++;
-        dom.css({
-            width: 244,
-            height: 135,
-            top: 70 + Math.floor(c / 5) * 135,
-            left: 30 + (c % 5) * 244,
-            opacity: 0,
-        });
-        dom.addClass('team-video-box');
-        $('body').append(dom);
-        c ++;
-    }
-    users = Jitsi.getUsers();
-    for (var user of users) {
-        if ('undefined' === typeof(user.properties['user'])) {
-            continue;
-        }
-        if (user.properties['user'].match('^team-')) {
-            var team_id = user.properties['user'].split('-')[1];
-            $('#team-status-' + team_id).attr('data-user', user.id).addClass('video-box');
-        }
-    }
-    Jitsi.reload();
-
-    $('.team-box').animate({opacity: 0}, 1000, function(){
-        $('#main-video').animate({width: 244, height: 135, top: 70+135*2, left: 30+244*2}, 1000, function(){
-            $('.team-video-box').animate({opacity: 1});
-        });
-    });
-});
-
-Jitsi.addAction('回單人', function() {
-    $('.team-video-box').animate({opacity: 0}, 1000, function(){
-        $('.team-video-box').remove();
-        Jitsi.reload();
-        $('#main-video').animate({width: 1220, height: 675, top: 70, left: 30}, 1000, function(){
-            $('#speaker-title').animate({opacity: 1}, 1000);
-        });
-    });
-});*/
 var now_title = 0;
 Jitsi.addAction('切換title', function() {
   now_title++;
