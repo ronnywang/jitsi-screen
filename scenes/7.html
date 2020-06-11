@@ -485,7 +485,7 @@ var process_message = function(text){
         return;
     }
     if (!data) return;
-    console.log(data);
+    if (data.type!="help" && data.type!="reply") return;
     var my_id = Jitsi.getMyID();
     var my_data = Jitsi.getUser(my_id);
     if (!my_data || !my_data.properties || !my_data.properties.user) {
