@@ -6,9 +6,9 @@ body {
     width: 1280px;
     margin: 0;
     background-color: #03151D;
-    
+    outline: 1px solid red;
     font-family: "Open Sans", "微軟正黑體", "Microsoft JhengHei", sans-serif;
-    color: white;
+    color: #14a73c;
     overflow: hidden;
 }
 
@@ -24,7 +24,6 @@ div {
     background-repeat: no-repeat;
     background-position: center center;
     background-size: contain;
-    background-color: rgba(0,0,0,0.5);
 }
 #img-footer {
     position: absolute;
@@ -41,33 +40,36 @@ div {
     
 }
 #pc-video {
-    left: 10px;
+    left: 15px;
     top: 70px;
-    width: 1040px;
-    height: 585px;
+    width: 960px;
+    height: 540px;
 }
 #live-video {
-    left: 950px;
-    top: 600px;
-    width: 320px;
-    height: 180px;
+    left: 977px;
+    top: 610px;
+    width: 288px;
+    height: 162px;
 }
 #team-title-left {
+    outline: 2px solid;
+    background-color: rgba(0,0,0,0.5);
     font-size: 2rem;
+    font-weight: bold;
     top: 720px;
-    left: 10px;
+    left: 15px;
 }
 .team-status {  
     outline: 1px solid #4D4398;
 }
 #team-video {
-    top: 420px;
-    left: 950px;
-    width: 320px;
-    height: 180px;
+    top: 448px;
+    left: 977px;
+    width: 288px;
+    height: 162px;
 }
 .video-box {
-  box-shadow: 5px 5px 5px rgba(30,30,30,0.5);
+  outline: 2px solid #14a73c;
 }
 .video-box a {
   font-size: 1.2rem;
@@ -102,9 +104,9 @@ Jitsi.on('user_box_updated', function(){
 
 Jitsi.addAction('切雙畫面', function() {
     $('#title-logo').animate({ top: 30, height: 100 }, 1000);
-    $('#team-title-left').animate({ top: 550 }, 1000);
-    $('#live-video').animate({ top: 200, left: 650, width: 600, height: 337 }, 1000);
+    $('#team-title-left').animate({ top: 550, left: 30 }, 1000);
     $('#team-video').animate({ top: 200, left: 30, width: 600, height: 337 }, 1000);
+    $('#live-video').animate({ top: 200, left: 650, width: 600, height: 337 }, 1000);
     $('#pc-video').animate({ opacity: 0 }, 1000);
     $('.video-box a').animate({ opacity: 0 }, 1000);
 });
@@ -112,8 +114,8 @@ Jitsi.addAction('切雙畫面', function() {
 Jitsi.addAction('切單畫面', function() {
     $('#title-logo').animate({ top: 10, height: 50 }, 1000);
     $('#team-title-left').animate({ top: 750 }, 1000);
-    $('#live-video').animate({ top: 600, left: 950, width: 320, height: 180 }, 1000);
-    $('#team-video').animate({ top: 420, left: 950, width: 320, height: 180 }, 1000);
+    $('#team-video').animate({ top: 448, left: 977, width: 288, height: 162 }, 1000);
+    $('#live-video').animate({ top: 610, left: 977, width: 288, height: 162 }, 1000);
     $('#pc-video').animate({ opacity: 1 }, 1000);
     $('.video-box a').animate({ opacity: 1 }, 1000);
 });

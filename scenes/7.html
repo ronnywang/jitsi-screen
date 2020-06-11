@@ -12,6 +12,10 @@ body {
     font-family: "Open Sans", "微軟正黑體", "Microsoft JhengHei", sans-serif;
     color: white;
 }
+
+video {
+  object-fit: cover;
+}
 .body-dashboard, .body-team {
   overflow: hidden;
 }
@@ -58,9 +62,11 @@ button {
     position: relative;
 }
 #team-name {
+  color: #14a73c;
   width: 600px;
   padding: 5px;
-  background-color: rgba(255,255,255,0.1);
+  background-color: rgba(0,0,0,0.5);
+  outline: 2px solid ;
 }
 
 .team-status {
@@ -76,7 +82,8 @@ button {
 }
 #main-video {
     width: 600px;
-    height: 337px;
+    height: 337px;    
+  outline: 2px solid #14a73c;
 }
 
 #main-title {
@@ -115,6 +122,7 @@ button {
     background-color: rgba(0, 0, 0, 0.5); 
 }
 #team-preview {
+  background-color: rgba(0,0,0,0.5);
   height: 200px;
   overflow-x: hidden;
   overflow-y: auto;
@@ -128,7 +136,7 @@ button {
   background-color: rgba(0,0,0,0.5);
 }
 .log-box .content {
-  color: #FF6;
+  color: #FFA;
 }
 .log-box .time {
   color: #3fa3b5;
@@ -154,14 +162,16 @@ select {
   margin: 5px 0;
 }
 #help-form input, #reply-form input {
-    width: 75%;
+    width: calc(100% - 65px);
     background-color: rgba(255,255,255,0.1);
     color: white;
     border: 1px solid white;
     border-radius: 3px;
 }
 #features-box {
-  margin-top: 50px;
+  margin-top: 25px;
+  padding-top: 25px;
+  padding-right: 15px;
 }
 #features-box .col-6 {
   border-right: 1px solid #333;  
@@ -217,7 +227,7 @@ select {
             </script>
         </div><!-- #right-team -->
         <div class="col-right" id="right-list"><!-- 沒在看單一團隊，顯示完整列表 -->
-            <div id="team-preview" class="container p-0 m-0"><!-- 團隊狀態 -->
+            <div id="team-preview" class="container p-2 m-0"><!-- 團隊狀態 -->
               <div class="row">
                 <div class="col">
                   <div id="team-preview-title">隊名</div>
@@ -235,10 +245,10 @@ select {
     </div><!-- #col-right -->
 </div><!-- .row -->
 <div class="row" id="features-box">
-    <div class="col-6">
+    <div class="col">
       <div id="people-feature"><!-- 團隊沒有的功能 -->
           <form id="reply-form">
-              <input type="text" name="content"><br>
+              <input type="text" name="content" required>
               <button type="submit">送出</button>
           </form>
           <button id="leave-team">離開這團隊</button>
@@ -255,13 +265,13 @@ select {
               <button type="submit">變更</button>
           </form>
           <form id="help-form">
-              與專家求助：<select name="people"></select><br>
-              求助內容：<input type="text" name="content"><br>
+              與專家求助：<select name="people" required></select><br>
+              求助內容：<input type="text" name="content" required>
               <button type="submit">求助</button>
           </form>
       </div>
     </div>
-    <div class="col-5 log-box" id="team-log-2"></div>
+    <div class="col log-box" id="team-log-2"></div>
 </div>
 </div><!-- .container-fluid -->
 <div id="img-footer"></div>
@@ -475,21 +485,31 @@ var process_message = function(text){
         return;
     }
     if (!data) return;
-
+    console.log(data);
     var my_id = Jitsi.getMyID();
     var my_data = Jitsi.getUser(my_id);
-    if(data.type == 'help')
-    {
-      if (!my_data || !my_data.properties || !my_data.properties.user) {
-      } else {
-          var terms = my_data.properties.user.split('-');
+    if (!my_data || !my_data.properties || !my_data.properties.user) {
+    } else {
+        var terms = my_data.properties.user.split('-');
+        if(data.type == 'help') {
           if (terms[0] == 'dashboard') {
           } else if (terms[0] == 'people' && terms[1] != data.to_people_id) {
               return;
           } else if (terms[0] == 'team' && terms[1] != data.from_team_id) {
               return;
           }
-      }
+        }
+        else if(data.type == 'reply') {
+          if (terms[0] == 'dashboard') {
+          } else if (terms[0] == 'people' && terms[1] != data.from_people_id) {
+              return;
+          } else if (terms[0] == 'team' && terms[1] != data.to_team_id) {
+              return;
+          }
+        }
+    }
+    if(data.type == 'help')
+    {      
       var help_message = $($('#tmpl-help-message').html());
       var t = new Date(data.time);
       var time_string = [
@@ -499,7 +519,9 @@ var process_message = function(text){
               ].join(':');
       $('.time', help_message).text('[' + time_string + ']');
       $('.team', help_message).text(teams[data.from_team_id]);
+      $('.team', help_message).attr("style","color: hsl("+(30+300*data.from_team_id/Object.keys(teams).length)+", 100%, 70%)");
       $('.people', help_message).text(people[data.to_people_id]);
+      $('.people', help_message).attr("style","color: hsl("+(30+300*data.to_people_id/Object.keys(people).length)+", 100%, 70%)");
       $('.content', help_message).text(data.content);
       $('#team-log-2').prepend(help_message.clone());
       $('#team-log').prepend(help_message.clone());
@@ -513,16 +535,6 @@ var process_message = function(text){
     }
     else
     {
-      if (!my_data || !my_data.properties || !my_data.properties.user) {
-      } else {
-          var terms = my_data.properties.user.split('-');
-          if (terms[0] == 'dashboard') {
-          } else if (terms[0] == 'people' && terms[1] != data.from_people_id) {
-              return;
-          } else if (terms[0] == 'team' && terms[1] != data.to_team_id) {
-              return;
-          }                    
-      }
       var help_message = $($('#tmpl-reply-message').html());
       var t = new Date(data.time);
       var time_string = [
@@ -532,7 +544,9 @@ var process_message = function(text){
               ].join(':');
       $('.time', help_message).text('[' + time_string + ']');
       $('.team', help_message).text(teams[data.to_team_id]);
+      $('.team', help_message).attr("style","color: hsl("+(30+300*data.to_team_id/Object.keys(teams).length)+", 100%, 70%)");
       $('.people', help_message).text(people[data.from_people_id]);
+      $('.people', help_message).attr("style","color: hsl("+(30+300*data.from_people_id/Object.keys(people).length)+", 100%, 70%)");
       $('.content', help_message).text(data.content);
       $('#team-log-2').prepend(help_message.clone());
       $('#team-log').prepend(help_message.clone());
@@ -619,8 +633,9 @@ $('#help-form').submit(function(e){
     message.time = (new Date).getTime();
     message.to_people_id = $('#help-form [name="people"]').val();
     message.content = $('#help-form [name="content"]').val();
-    if(message.content.length > 0) {
+    if(message.content.length > 0 && message.to_people_id>0) {
       Jitsi.sendTextMessage(JSON.stringify(message));
+      $('#help-form [name="content"]').val('');
     }
 });
 
@@ -641,6 +656,7 @@ $('#reply-form').submit(function(e){
     message.content = $('#reply-form [name="content"]').val();
     if(message.content.length > 0) {
       Jitsi.sendTextMessage(JSON.stringify(message));
+      $('#reply-form [name="content"]').val('');
     }
 });
 
@@ -649,5 +665,4 @@ Jitsi.on('user_left', update_view);
 Jitsi.on('property_changed', update_view);
 Jitsi.on('track_added', update_view);
 Jitsi.on('track_removed', update_view);
-
 </script>
