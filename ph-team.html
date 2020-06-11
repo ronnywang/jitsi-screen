@@ -427,6 +427,12 @@ var onConnected = function() {
 	width = 1200;
 	popup_window = window.open('', '輸出畫面', config='autoplay=yes,menubar=no,status=no,toolbar=no,height=' + (height + 100) + ',width=' + (width + 100));
     popup_window.Jitsi = {fire: function(){}};
+    popup_window.download_file = function(filename, dataurl) {
+        var link = document.createElement('a');
+        link.download = filename;
+        link.href = dataurl;
+        link.click();
+    };
 
     update_devices();
     room = connection.initJitsiConference(jitsi_room, confOptions);
