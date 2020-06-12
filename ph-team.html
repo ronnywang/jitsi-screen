@@ -318,7 +318,9 @@ $('#btn-screenshare').click(function(e){
     Promise.all(promises).then(function(){
 		JitsiMeetJS.createLocalTracks({ devices: [ 'desktop' ] })
 		.then(function(tracks){
-			room_screenshare.addTrack(tracks[0]);
+            for (var track of tracks) {
+                room_screenshare.addTrack(track);
+            }
 		})
 		.catch(error => {
 		});
