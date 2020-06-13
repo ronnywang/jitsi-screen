@@ -457,10 +457,6 @@ var onConnected = function() {
     room.on(
         JitsiMeetJS.events.conference.CONFERENCE_JOINED,
         function(){
-            room.on(JitsiMeetJS.events.conference.DATA_CHANNEL_OPENED, () => {
-                room.broadcastEndpointMessage({type: 'request_scene', message: {}});
-            });
-
             room.on(JitsiMeetJS.events.conference.PARTICIPANT_CONN_STATUS_CHANGED, (id, status) => {
                     restore_inactive_track();
             });
@@ -503,6 +499,10 @@ var onConnected = function() {
                     }
                 }
             });
+            room.on(JitsiMeetJS.events.conference.DATA_CHANNEL_OPENED, () => {
+                room.broadcastEndpointMessage({type: 'request_scene', message: {}});
+            });
+
         });
 
     popup_window._start = function(){
