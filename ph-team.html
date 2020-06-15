@@ -126,7 +126,7 @@ $('#jitsi-form').submit(function(e){
             user_name = dashboard[current_user_id];
         }
 
-        JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
+        JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.INFO);
         JitsiMeetJS.init(initOptions);
 		const options = {
 			hosts: {
