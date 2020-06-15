@@ -793,6 +793,8 @@ $('#screen-choose-body-area').on('click', '.btn-add-viewer', function(e){
     current_data.screens[screen_id].viewers = $('.btn-delete-viewer', box_dom).map(function(a){ return $(this).data('viewer'); }).toArray()
     if (room && has_scene_to_response()) {
         console.log('broadcast scenes to all viewers');
+        current_data.version = (new Date).getTime();
+        room.setLocalParticipantProperty('scene_version', current_data.version);
         room.broadcastEndpointMessage({type: 'update_scene', message: {current_data: current_data}});
     }
 });
@@ -808,6 +810,8 @@ $('#screen-choose-body-area').on('click', '.btn-delete-viewer', function(e){
     }
     current_data.screens[screen_id].viewers = $('.btn-delete-viewer', box_dom).map(function(a){ return $(this).data('viewer'); }).toArray()
     if (room) {
+        current_data.version = (new Date).getTime();
+        room.setLocalParticipantProperty('scene_version', current_data.version);
         room.broadcastEndpointMessage({type: 'update_scene', message: {current_data: current_data}});
     }
 });
@@ -822,6 +826,8 @@ $('#screen-choose-body-area').on('change', '.user-select', function(e){
     $('.user-select', screen_choose_body_dom).each(function(){
         current_data.screens[screen_id].user_select[$(this).data('id')] = $(this).val();
     });
+    current_data.version = (new Date).getTime();
+    room.setLocalParticipantProperty('scene_version', current_data.version);
     room.broadcastEndpointMessage({type: 'update_scene', message: {current_data: current_data}});
     update_screen_video();
 });
