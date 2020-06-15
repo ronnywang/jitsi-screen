@@ -1272,6 +1272,7 @@ var onConnected = function() {
             room.on(JitsiMeetJS.events.conference.TRACK_AUDIO_LEVEL_CHANGED, level_changed);
         });
 
+    room.setLocalParticipantProperty('jitsi-screen', true);
     if ($('[name="password"]').val()) {
         room.join($('[name="password"]').val());
     } else {
