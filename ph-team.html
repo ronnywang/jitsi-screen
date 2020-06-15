@@ -533,6 +533,10 @@ var update_content = function(){
     } else {
         hit_scene_id = hit_screen.scene_id;
     }
+    if (room) {
+        room.setLocalParticipantProperty('scene_version', current_data.version);
+        room.setLocalParticipantProperty('current_scene', current_data.scenes[hit_scene_id].name);
+    }
     hit_scene_content = current_data.scenes[hit_scene_id].content;
     if (hit_scene_id != current_scene_id || hit_scene_content != current_scene_content) {
         current_scene_id = hit_scene_id;
