@@ -63,13 +63,13 @@ div {
 .team-status {  
     outline: 1px solid #4D4398;
 }
-#team-video {
+#a3-video {
     top: 612px;
     left: 977px;
     width: 288px;
     height: 162px;
 }
-#pro-video video, #team-video video {
+#pro-video video, #a3-video video {
   object-fit: cover;
 }
 .video-box {
@@ -89,9 +89,10 @@ div {
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <div id="title-logo"></div>
 <div class="video-box" data-id="screenshareA6" data-select="true" id="pc-video"></div>
-<div class="video-box" data-id="cameraA3" data-select="true" id="pro-video"></div>
+<div class="video-box" data-id="asking-pro" data-select="true" id="pro-video"></div>
+<div class="video-box" data-id="cameraA6" style="opacity: 0"></div>
 <div id="team-title-left"></div>
-<div class="video-box" data-id="teamA6" data-select="true" id="team-video"><a>A6團隊現場</a></div>
+<div class="video-box" data-id="cameraA3" data-select="true" id="a3-video"><a>A3戰情室現場</a></div>
 <div id="img-footer"></div>
 <script>
 Jitsi.on('user_box_updated', function(){
@@ -109,7 +110,7 @@ Jitsi.on('user_box_updated', function(){
 Jitsi.addAction('切雙畫面', function() {
     $('#title-logo').animate({ top: 30, height: 100 }, 1000);
     $('#team-title-left').animate({ top: 550, left: 30 }, 1000);
-    $('#team-video').animate({ top: 200, left: 30, width: 600, height: 337 }, 1000);
+    $('#a3-video').animate({ top: 200, left: 30, width: 600, height: 337 }, 1000);
     $('#pro-video').animate({ opacity: 1 }, 1000);
     $('#pc-video').animate({ opacity: 0 }, 1000);
     $('.video-box a').animate({ opacity: 0 }, 1000);
@@ -118,7 +119,7 @@ Jitsi.addAction('切雙畫面', function() {
 Jitsi.addAction('切單畫面', function() {
     $('#title-logo').animate({ top: 10, height: 50 }, 1000);
     $('#team-title-left').animate({ top: 720 }, 1000);
-    $('#team-video').animate({ top: 612, left: 977, width: 288, height: 162 }, 1000);
+    $('#a3-video').animate({ top: 612, left: 977, width: 288, height: 162 }, 1000);
     $('#pro-video').animate({ opacity: 0 }, 1000);
     $('#pc-video').animate({ opacity: 1 }, 1000);
     $('.video-box a').animate({ opacity: 1 }, 1000);
