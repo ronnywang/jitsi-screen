@@ -81,6 +81,7 @@ div {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <div id="title-logo"></div>
 <div class="video-box" data-id="1" data-select="true" id="main-video"><div id="speaker-title">啟動儀式</div></div>
 <!--div class="team-box video-box" data-id="2" data-select="true" id="viewer-video" style="opacity: 0"></div-->
@@ -241,6 +242,40 @@ $.get('team.csv', function(content){
     if (!my_data || !my_data.properties || !my_data.properties.user || !my_data.properties.user.match('^team')) {
         window.addEventListener('keyup', click);
     }
+});
+
+Jitsi.addAction('拍截圖', function() {
+    var idx = 0;
+    $('.video-box').each(function(){
+        idx ++;
+        var canvas = document.createElement('canvas');
+        var video_dom = $('video', this);
+        canvas.width = video_dom.width();
+        canvas.height = video_dom.height();
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(video_dom[0], 0, 0, canvas.width, canvas.height);
+        $(this).css('background-image', 'url(\'' + canvas.toDataURL() + '\')');
+    });
+    
+    html2canvas($('body')[0], {width: 1280, height: 800}).then(canvas => {
+        window.download_file('啟動大合照.png', canvas.toDataURL());
+
+        var my_id = Jitsi.getMyID();
+        var my_data = Jitsi.getUser(my_id);
+        if (!my_data || !my_data.properties || !my_data.properties.user || !my_data.properties.user.match('^team')) {
+        } else {
+            team_id = my_data.properties.user.split('-')[1];
+            var cam_canvas = document.createElement('canvas');
+            cam_canvas.width = 1920;
+            cam_canvas.height = 1080;
+            var ctx = cam_canvas.getContext('2d');
+            ctx.drawImage($('#team-status-' + team_id + ' video')[0], 0, 0, 1920, 1080);
+            window.download_file('啟動大合照_' + my_data.name.replace(' ', '_') + '.png', cam_canvas.toDataURL());
+        }
+        $('.video-box').each(function(){
+            $(this).css('background-image', '');
+        });
+    });
 });
 var now_title = 0;
 Jitsi.reload();
