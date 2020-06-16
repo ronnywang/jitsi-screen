@@ -1111,12 +1111,12 @@ var update_devices = function(tracks) {
             var has_audio = false;
             for (var device of devices) {
                 if (device.kind == 'audioinput' && device.label != '') {
-                    $('#output-audio').append($('<option></option>').attr('val', device.deviceId).text(device.label));
+                    $('#output-audio').append($('<option></option>').attr('value', device.deviceId).text(device.label));
                     has_audio = true;
                     device_list.audio.push(device);
                 }
                 if (device.kind == 'videoinput' && device.label != '') {
-                    $('#output-video').append($('<option></option>').attr('val', device.deviceId).text(device.label));
+                    $('#output-video').append($('<option></option>').attr('value', device.deviceId).text(device.label));
                     has_video = true;
                     device_list.video.push(device);
                 }
