@@ -368,6 +368,16 @@ $('#output-video').change(function(){
 
     Promise.all(promises).then(function(){
         if ('none' == id) {
+        } else if ('screenshare' == id) {
+            JitsiMeetJS.createLocalTracks({ devices: [ 'desktop' ] })
+            .then(function(tracks){
+                for (var track of tracks) {
+                    room.addTrack(track);
+                }
+            })
+		.catch(error => {
+		});
+
         } else {
             get_local_video_track(id, function(track){
                 room.addTrack(track);
@@ -382,6 +392,7 @@ var update_devices = function(tracks) {
             var origin_video = $('#output-video').val();
             $('#output-video').html('');
             $('#output-video').append($('<option value="none">無</option>'));
+            $('#output-video').append($('<option value="screenshare">螢幕分享</option>'));
             $('#output-audio').html('');
             $('#output-audio').append($('<option value="none">無</option>'));
             device_list.audio = [];
