@@ -803,21 +803,21 @@ $('#screen-choose-body-area').on('click', '.btn-add-viewer', function(e){
         console.log('broadcast scenes to all viewers');
         current_data.version = (new Date).getTime();
         room.setLocalParticipantProperty('scene_version', current_data.version);
-        update_scene();
+        room.broadcastEndpointMessage({type: 'update_scene', message: get_scene_data()});
     }
 });
-var update_scene = function(){
+var get_scene_data = function(){
     var scenes = {};
     for (var screen_id in current_data.screens) {
         if (current_data.screens[screen_id].viewers.length) {
             scenes[current_data.screens[screen_id].scene_id] = current_data.scenes[current_data.screens[screen_id].scene_id];;
         }
     }
-    room.broadcastEndpointMessage({type: 'update_scene', message: {current_data: {
+    return {current_data: {
         screens: current_data.screens,
         scenes: scenes,
         version: current_data.version,
-    }}});
+    }};
 };
 
 $('#screen-choose-body-area').on('click', '.btn-delete-viewer', function(e){
@@ -833,7 +833,7 @@ $('#screen-choose-body-area').on('click', '.btn-delete-viewer', function(e){
     if (room) {
         current_data.version = (new Date).getTime();
         room.setLocalParticipantProperty('scene_version', current_data.version);
-        update_scene();
+        room.broadcastEndpointMessage({type: 'update_scene', message: get_scene_data()});
     }
 });
 
@@ -849,7 +849,7 @@ $('#screen-choose-body-area').on('change', '.user-select', function(e){
     });
     current_data.version = (new Date).getTime();
     room.setLocalParticipantProperty('scene_version', current_data.version);
-    update_scene();
+    room.broadcastEndpointMessage({type: 'update_scene', message: get_scene_data()});
     update_screen_video();
 });
 
@@ -1238,9 +1238,7 @@ var onConnected = function() {
                     if (message.type == 'request_scene') {
                         if (has_scene_to_response()) {
                             console.log('User ' + participant.getId() + ' requested scenes, responsed');
-                            room.sendEndpointMessage(participant.getId(), {type: 'response_scene', message: {
-                                    current_data: current_data
-                            }});
+                            room.sendEndpointMessage(participant.getId(), {type: 'response_scene', message: get_scene_data()});
                         } else {
                             console.log('User ' + participant.getId() + ' requested scenes, no scene to response');
                         }
