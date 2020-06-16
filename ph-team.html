@@ -241,6 +241,12 @@ var update_screen_video = function(){
                 if ('undefined' !== typeof(track)) {
                     tracks.push(track);
                 }
+            } else if (room_screenshare && user_id == room_screenshare.myUserId()) {
+                var track = room_screenshare.getLocalVideoTrack();
+                var tracks = [];
+                if ('undefined' !== typeof(track)) {
+                    tracks.push(track);
+                }
             } else if ('undefined' !== typeof(room.participants[user_id])) {
                 var tracks = room.participants[user_id].getTracksByMediaType('video');
                 audio_track = room.participants[user_id].getTracksByMediaType('audio')[0];
