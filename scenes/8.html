@@ -39,13 +39,13 @@ div {
     background-size: cover;
     
 }
-#pc-video {
+#a6-cam-video {
     left: 15px;
     top: 70px;
     width: 960px;
     height: 540px;
 }
-#live-video {
+#slide-video {
     left: 977px;
     top: 610px;
     width: 288px;
@@ -62,13 +62,13 @@ div {
 .team-status {  
     outline: 1px solid #4D4398;
 }
-#team-video {
+#a3-cam-video {
     top: 448px;
     left: 977px;
     width: 288px;
     height: 162px;
 }
-#live-video video, #team-video video {
+#a3-cam-video video, #a6-cam-video video {
   object-fit: cover;
 }
 .video-box {
@@ -87,14 +87,14 @@ div {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <div id="title-logo"></div>
-<div class="video-box" data-id="pc" data-select="true" id="pc-video"></div>
-<div class="video-box" data-id="liveA3" data-select="true" id="live-video"><a>A3戰情室現場</a></div>
+<div class="video-box" data-id="A6-CAM" data-select="true" id="a6-cam-video"></div>
+<div class="video-box" data-id="A3-CAM" data-select="true" id="a3-cam-video"><a>A3戰情室現場</a></div>
 <div id="team-title-left"></div>
-<div class="video-box" data-id="teamA6" data-select="true" id="team-video"><a>A6團隊現場</a></div>
+<div class="video-box" data-id="A3-SLIDE" data-select="true" id="slide-video"><a>團隊簡報</a></div>
 <div id="img-footer"></div>
 <script>
 Jitsi.on('user_box_updated', function(){
-    var result_user_id = $('#team-video').attr('data-result-user');
+    var result_user_id = $('#a6-cam-video').attr('data-result-user');
     var user = Jitsi.getUser(result_user_id);
     if (user) {
         if (user.properties['display-name']) {
@@ -108,18 +108,18 @@ Jitsi.on('user_box_updated', function(){
 Jitsi.addAction('切雙畫面', function() {
     $('#title-logo').animate({ top: 30, height: 100 }, 1000);
     $('#team-title-left').animate({ top: 550, left: 30 }, 1000);
-    $('#team-video').animate({ top: 200, left: 30, width: 600, height: 337 }, 1000);
-    $('#live-video').animate({ top: 200, left: 650, width: 600, height: 337 }, 1000);
-    $('#pc-video').animate({ opacity: 0 }, 1000);
+    $('#a6-cam-video').animate({ top: 200, left: 30, width: 600, height: 337 }, 1000);
+    $('#a3-cam-video').animate({ top: 200, left: 650, width: 600, height: 337 }, 1000);
+    $('#slide-video').animate({ opacity: 0 }, 1000);
     $('.video-box a').animate({ opacity: 0 }, 1000);
 });
 
 Jitsi.addAction('切單畫面', function() {
     $('#title-logo').animate({ top: 10, height: 50 }, 1000);
     $('#team-title-left').animate({ top: 720 }, 1000);
-    $('#team-video').animate({ top: 448, left: 977, width: 288, height: 162 }, 1000);
-    $('#live-video').animate({ top: 610, left: 977, width: 288, height: 162 }, 1000);
-    $('#pc-video').animate({ opacity: 1 }, 1000);
+    $('#a3-cam-video').animate({ top: 448, left: 977, width: 288, height: 162 }, 1000);
+    $('#a6-cam-video').animate({ top: 70, left: 15, width: 960, height: 540 }, 1000);
+    $('#slide-video').animate({ opacity: 1 }, 1000);
     $('.video-box a').animate({ opacity: 1 }, 1000);
 });
 
@@ -137,7 +137,7 @@ Jitsi.addAction('拍截圖', function() {
     });
     
     html2canvas($('body')[0], {width: 1280, height: 800}).then(canvas => {
-        var result_user_id = $('#team-video').attr('data-result-user');
+        var result_user_id = $('#a6-cam-video').attr('data-result-user');
         var user = Jitsi.getUser(result_user_id);
         if (user) {
             if (user.properties['display-name']) {
@@ -148,15 +148,15 @@ Jitsi.addAction('拍截圖', function() {
                     cam_canvas.width = 1920;
                     cam_canvas.height = 1080;
                     var ctx = cam_canvas.getContext('2d');
-                    ctx.drawImage($('#team-video video')[0], 0, 0, 1920, 1080);
+                    ctx.drawImage($('#a6-cam-video video')[0], 0, 0, 1920, 1080);
                     window.download_file('合照攝影機_' + n.replace(' ', '_') + '.png', cam_canvas.toDataURL());
                 }
-                if ($('#live-video').attr('data-result-user') == Jitsi.getMyID()) {
+                if ($('#a3-cam-video').attr('data-result-user') == Jitsi.getMyID()) {
                     var cam_canvas = document.createElement('canvas');
                     cam_canvas.width = 1920;
                     cam_canvas.height = 1080;
                     var ctx = cam_canvas.getContext('2d');
-                    ctx.drawImage($('#live-video video')[0], 0, 0, 1920, 1080);
+                    ctx.drawImage($('#a3-cam-video video')[0], 0, 0, 1920, 1080);
                     window.download_file('合照攝影機_' + n.replace(' ', '_') + '.png', cam_canvas.toDataURL());
                 }
             }
