@@ -1,3 +1,270 @@
 1
-單人全螢幕
-<div class="video-box" data-id="1" data-select="true"></div>
+全部狀況
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" />
+<style>
+body {
+    height: 800px;
+    width: 1280px;
+    outline: 1px solid red;
+    margin: 0;
+    background-color: #03151D;
+    font-family: "Open Sans", "微軟正黑體", "Microsoft JhengHei", sans-serif;
+    color: white;
+}
+
+video {
+  object-fit: cover;
+}
+.body-dashboard, .body-team {
+  overflow: hidden;
+}
+.body-people {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+button {
+  color: white;
+  background-color: rgba(255,255,255,0.1);
+  border: 1px solid #4D4398;
+  border-radius: 3px;
+  margin: 3px;
+}
+#title-logo {
+    height: 50px;
+    width: 1280px;
+    margin-bottom: 10px;
+    background-image: url('assets/img/onlylogofont.png?v=1');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+}
+#img-footer {
+    position: absolute;
+    z-index: -999;
+    bottom: 0;
+    height: 110%;
+    width: 110%;
+    margin-left: -15px;
+    margin-right: -15px;
+    background-image: url('assets/img/footer_dark.jpg');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    
+}
+.user-box{
+    height: 85px;
+    outline: 1px solid #4D4398;
+    position: relative;
+    background-color: green;
+}
+.user-box.error {
+    background-color: red;
+}
+.user-box.warning {
+    background-color: yellow;
+}
+.team-status {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    color: yellow;
+}
+
+#team-preview {
+  background-color: rgba(0,0,0,0.5);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+select {
+  margin: 5px 0;
+}
+@keyframes blink-keyframes
+{
+  0% {color: #FFF;}
+  100% {color: #F00;}
+}
+
+.blinking {
+  animation: blink-keyframes 1s ease 0s infinite alternate;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<div class="container-fluid">
+<div style="height: 10px"></div>
+<div id="title-logo"></div>
+<div class="row">
+    <div class="col-6" id="col-left">
+        <div class="col-left container" id="left-list"><!-- 沒在看單一團隊，顯示完整列表 -->
+        </div>
+        <script type="text/html" id="tmpl-user-box">
+        <div class="user-box">
+          <div class="team-name"></div>
+          <div class="team-status">
+            <span class="mic">麥克風</span>
+            <span class="cam">攝影機</span>
+            <span class="ss">螢幕分享</span>
+          </div>
+          <div><span class="status">未上線</span></div>
+          <div><span class="scene"></span></div>
+        </div>
+        </script>
+    </div><!-- #col-left -->
+    <div class="col-6" id="col-right">
+        <div class="col-right" id="right-list"><!-- 沒在看單一團隊，顯示完整列表 -->
+            <div id="team-preview" class="container p-2 m-0"><!-- 團隊狀態 -->
+              <div class="row">
+                <div class="col">
+                    <h5>參與者</h5>
+                    <div id="member-list"></div>
+                </div>
+                <div class="col">
+                    <h5>控制帳號</h5>
+                    <div id="scene-status" class="user-box">
+                        <div>現在場景：<span class="scene"></span></div>
+                        <div class="status"></div>
+                    </div>
+                    <div id="control-list"></div>
+                </div>
+              </div>
+            </div>          
+        </div>
+    </div><!-- #col-right -->
+</div><!-- .row -->
+</div><!-- .container-fluid -->
+<div id="img-footer"></div>
+<script>
+var teams;
+var people;
+
+var get_user_box = function(user, pos){
+    if ($('#user-box-' + user.id).length) {
+        return $('#user-box-' + user.id);
+    }
+    var col_dom = $($('#tmpl-user-box').html());
+    $('.team-name', col_dom).text(user.name);
+    col_dom.attr('id', 'user-box-' + user.id);
+    col_dom.addClass('m-0 p-0 people-box');
+    $('#' + pos).append(col_dom);
+    return $('#user-box-' + user.id);
+};
+
+var update_view = function(){
+    // 刪除不在使用者
+    $('.people-box').each(function(){
+        var user_id = $(this).data('user_id');
+        if (!Jitsi.getUser(user_id)) {
+            $(this).remove();
+        }
+    });
+
+    // 無上線團隊清空
+    $('.team-box').each(function(){
+        var user_id = $(this).data('user_id');
+        if (!Jitsi.getUser(user_id)) {
+            $(this).addClass('error');
+            $('.status', this).text('未上線');
+        }
+    });
+
+    // 查是否有場景提供者
+    $('#scene-status').data('owner', null).removeClass('error').removeClass('warning');
+    $('#scene-status .status').text('');
+
+    for (var user of Jitsi.getUsers()) {
+        if ('undefined' === typeof(user.properties['user'])) {
+            if ('undefined' !== typeof(user.properties['jitsi-screen'])) {
+                if (user.properties.scene_version) {
+                    if ($('#scene-status').data('owner')) {
+                        $('#scene-status .status').text('同時有兩個送場景主控台');
+                        $('#scene-status').addClass('error');
+                    }
+                    $('#scene-status').data('owner', user.id).data('scene_version', user.properties.scene_version);
+                }
+            }
+        }
+    }
+    if (!$('#scene-status').data('owner')) {
+        $('#scene-status').addClass('error');
+        $('#scene-status .status').text('沒有場景');
+    }
+
+    // 檢查所有使用者
+    for (var user of Jitsi.getUsers()) {
+        if ('undefined' === typeof(user.properties['user'])) {
+            if ('undefined' !== typeof(user.properties['jitsi-screen'])) {
+                box = get_user_box(user, 'control-list');
+                $('.status', box).text('');
+            } else {
+                box = get_user_box(user, 'control-list');
+                $('.status', box).text('不明使用者').addClass('error');
+            }
+        } else {
+            var user_id = user.properties['user'];
+            var type = user_id.split('-')[0];
+            if (type == 'team') {
+                box = $('#team-box-' + user_id.split('-')[1]);
+            } else if (type == 'teamss') {
+                continue;
+            } else if (type == 'people') {
+                box = get_user_box(user, 'member-list');
+            } else if (type == 'dashboard') {
+                box = get_user_box(user, 'member-list');
+            } else {
+                continue;
+            }
+            $('.status', box).text('');
+            $('.scene', box).text(user.properties.current_scene);
+            box.removeClass('error').removeClass('warning');
+            if (user.properties.scene_version != $('#scene-status').data('scene_version')) {
+                box.addClass('warning');
+                $('.status', box).text('場景不同步');
+            }
+        }
+    }
+    Jitsi.reload();
+}
+
+$.get('team.csv', function(content){
+    teams = {};
+    people = {};
+    content.split("\n").map(function(line){
+        if (line == '') return;
+        var terms = line.split('|');
+        if (terms[0] == 'team') { 
+            teams[terms[1]] = terms[2];
+        } else if (terms[0] == 'people') {
+            people[terms[1]] = terms[2];
+        }
+    });
+
+    var terms = [];
+    for (var id in teams) {
+        terms.push([id, teams[id]]);
+        if (terms.length == 3) {
+            var row_dom = $('<div class="row"></div>');
+            terms.map(function(term){
+                var col_dom = $($('#tmpl-user-box').html());
+                $('.team-name', col_dom).text(term[1]);
+                col_dom.data('team_id', term[0]);
+                col_dom.attr('id', 'team-box-' + term[0]);
+                col_dom.addClass('team-box error');
+                col_dom.addClass('col-4 m-0 p-0');
+                row_dom.append(col_dom);
+            });
+            
+            $('#left-list').append(row_dom);
+            terms = [];
+        }
+    }
+
+    update_view();
+});
+
+Jitsi.on('user_joined', update_view);
+Jitsi.on('user_left', update_view);
+Jitsi.on('property_changed', update_view);
+Jitsi.on('track_added', update_view);
+Jitsi.on('track_removed', update_view);
+</script>
