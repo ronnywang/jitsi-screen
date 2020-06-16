@@ -24,6 +24,7 @@
     收音選擇：<select name="audio" id="output-audio"></select><br>
     螢幕分享：<span id="screenshare-status"></span>
         <button type="button" id="btn-screenshare">開啟</button>
+        <button type="button" id="btn-closescreenshare">關閉</button>
     <br>
     攝影機預覽：<div id="camera-preview"></div>
     <br>
@@ -304,6 +305,15 @@ $('#output-audio').change(function(){
             });
         }
     });
+});
+
+$('#btn-closescreenshare').click(function(e){
+    e.preventDefault();
+    for (var track of room_screenshare.getLocalTracks()) {
+        if (track.deviceId == 'loopback' || track.videoType == 'desktop') {
+            room_screenshare.removeTrack(track);
+        }
+    }
 });
 
 $('#btn-screenshare').click(function(e){
