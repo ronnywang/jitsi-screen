@@ -871,7 +871,12 @@ var update_screen_video = function(){
                 $(this).append($('<video style="width: 100%; height: 100%; border: 0; margin: 0; padding: 0; display: none" autoplay="1" muted></video>'));
                 $(this).addClass('no-video');
             }
+            if (!$('audio', this).length) {
+                $(this).append($('<audio autoplay="1"></audio>'));
+                $(this).addClass('no-audio');
+            }
             var video_dom = $('video', this);
+            var audio_dom = $('audio', this);
             $(this).attr('data-result-user', user_id);
             if ('undefined' === typeof(user_id) || user_id == 'none') {
                 var old_track = video_dom[0].__track;
@@ -897,6 +902,7 @@ var update_screen_video = function(){
                     video_attach(this, track);
                 });
             } else {
+                var audio_track = null;
                 if (user_id == room.myUserId()) {
                     var track = room.getLocalVideoTrack();
                     var tracks = [];
@@ -905,10 +911,18 @@ var update_screen_video = function(){
                     }
                 } else if ('undefined' !== typeof(room.participants[user_id])) {
                     var tracks = room.participants[user_id].getTracksByMediaType('video');
+                    audio_track = room.participants[user_id].getTracksByMediaType('audio')[0];
+                    if ($(this).is('.audio-mute')) {
+                        audio_track = null;
+                    }
                 } else {
                     var old_track = video_dom[0].__track;
                     if (old_track) {
                         video_detach(this, old_track);
+                    }
+                    old_track = audio_dom[0].__track;
+                    if (old_track) {
+                        audio_detach(this, old_track);
                     }
                     return;
                 }
@@ -920,10 +934,18 @@ var update_screen_video = function(){
                 if (tracks.length) {
                     if (!old_track || old_track.ssrc != tracks[0].ssrc || old_track.deviceId != tracks[0].deviceId) {
                         video_attach(this, tracks[0]);
-                        if ($(this).attr('data-select') == 'true') {
-                            selected_users[user_id] = 'select';
-                        }
                     }
+                    if ($(this).attr('data-select') == 'true') {
+                        selected_users[user_id] = 'select';
+                    }
+                }
+
+                var old_track = audio_dom[0].__track;
+                if (old_track && (!audio_track || old_track.ssrc != audio_track.ssrc)) {
+                    audio_detach(this, old_track);
+                }
+                if (audio_track && (!old_track || old_track.ssrc != audio_track.ssrc)) {
+                    audio_attach(this, audio_track);
                 }
             }
         });
