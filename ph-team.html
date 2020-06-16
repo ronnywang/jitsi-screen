@@ -23,10 +23,11 @@
     團隊：<span id="user-name"></span><br>
     遠景攝影機：<select name="camera" id="output-video"></select><br>
     收音選擇：<select name="audio" id="output-audio"></select><br>
+    <div id="area-screenshare" style="display: none">
     螢幕分享：<span id="screenshare-status"></span>
         <button type="button" id="btn-screenshare">開啟</button>
         <button type="button" id="btn-closescreenshare">關閉</button>
-    <br>
+    </div>
     攝影機預覽：<div id="camera-preview"></div>
     <br>
 </div>
@@ -467,6 +468,7 @@ var onScreenShareConnected = function() {
             alert("CONFERENCE_ERROR:" + error);
         });
 	room_screenshare.join();
+    $('#area-screenshare').show();
 }
 
 var onConnected = function() {
