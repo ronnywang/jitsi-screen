@@ -1,5 +1,5 @@
 5
-總統致詞合照
+啟動儀式
 <style>
 body {
     height: 800px;
@@ -71,10 +71,6 @@ div {
     width: 600px;
     height: 337px;
 }
-#viewer-title {
-    top: 550px;
-    left: 640px;
-}
 .team-name {
     position: absolute;
     left: 0;
@@ -86,9 +82,8 @@ div {
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <div id="title-logo"></div>
-<div class="video-box" data-id="1" data-select="true" id="main-video"><div id="speaker-title">主持人：鄭國威</div></div>
+<div class="video-box" data-id="1" data-select="true" id="main-video"><div id="speaker-title">啟動儀式</div></div>
 <!--div class="team-box video-box" data-id="2" data-select="true" id="viewer-video" style="opacity: 0"></div-->
-<div id="viewer-title" class="team-box titles" style="opacity: 0">團隊：</div>
 <div id="img-footer"></div>
 <script type="text/html" id="tmpl-team-status">
 <div class="team-status">
@@ -240,7 +235,6 @@ $.get('team.csv', function(content){
         if (terms[0] != 'team') return;
         teams[terms[1]] = terms[2];
     });
-    $('#viewer-title').text('團隊：' + Jitsi.getUser(Jitsi.getMyID()).name);
 
     var my_id = Jitsi.getMyID();
     var my_data = Jitsi.getUser(my_id);
@@ -249,21 +243,5 @@ $.get('team.csv', function(content){
     }
 });
 var now_title = 0;
-Jitsi.addAction('切換title', function() {
-  now_title++;
-  $("#speaker-title").animate({opacity: 0}, 500, function(){
-      switch(now_title%3) {
-        case 0:
-          $("#speaker-title").text("主持人：鄭國威");
-          break;        
-        case 1:
-          $("#speaker-title").text("李俊俋 副秘書長");
-          break;
-        case 2:
-          $("#speaker-title").text("蔡英文 總統");
-          break;
-      }
-      $("#speaker-title").animate({opacity: 1}, 500);
-  });
-});
+Jitsi.reload();
 </script>
