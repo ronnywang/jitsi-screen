@@ -729,7 +729,7 @@ $('#jitsi-form').submit(function(e){
         jitsi_domain = matches[1];
         jitsi_room = matches[2].toLowerCase();
 
-        JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
+        JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.INFO);
         JitsiMeetJS.init(initOptions);
 		const options = {
 			hosts: {
