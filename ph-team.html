@@ -390,6 +390,7 @@ var update_devices = function(tracks) {
     if (JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output')) {
         JitsiMeetJS.mediaDevices.enumerateDevices(devices => {
             var origin_video = $('#output-video').val();
+            var origin_audio = $('#output-video').val();
             $('#output-video').html('');
             $('#output-video').append($('<option value="none">無</option>'));
             $('#output-video').append($('<option value="screenshare">螢幕分享</option>'));
@@ -402,6 +403,9 @@ var update_devices = function(tracks) {
             for (var device of devices) {
                 if (device.kind == 'audioinput' && device.label != '') {
                     $('#output-audio').append($('<option></option>').attr('value', device.deviceId).text(device.label));
+                    if (!origin_audio) {
+                        origin_audio = device.deviceId;
+                    }
                     has_audio = true;
                     device_list.audio.push(device);
                 }
@@ -428,6 +432,9 @@ var update_devices = function(tracks) {
             }
             if (origin_video) {
                 $('#output-video').val(origin_video);
+            }
+            if (origin_audio) {
+                $('#output-audio').val(origin_audio);
             }
             if (has_video) {
                 $('#output-video').change();
