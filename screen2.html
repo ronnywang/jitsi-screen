@@ -200,7 +200,9 @@ body {
                   <h3>新增畫面</h3>
                   <form class="form-screen-choose">
                       視窗動作：<button class="btn-focus">最上層</button>
-                        <button class="btn-reopen">重新開啟</button><br>
+                        <button class="btn-reopen">重新開啟</button>
+                        <button class="btn-reupdate">重新繪製</button>
+                    <br>
                       選擇場景：<span class="screen-chooser"></span><br>
                       畫面標題：<input type="text" placeholder="可不輸入" name="title"><br>
                       尺寸：<input type="text" name="width" value="1600" size="5"> x <input type="text" name="height" value="900" size="5"><Br>
@@ -579,6 +581,12 @@ $('#screen-choose-body-area').on('click', '.btn-focus', function(e){
     windows[idx].focus();
 });
 
+$('#screen-choose-body-area').on('click', '.btn-reupdate', function(e){
+    e.preventDefault();
+    var idx = $(this).parents('.screen-choose-body').attr('id').split('-')[3];
+    windows[idx].Jitsi.reload();
+});
+
 $('#screen-choose-body-area').on('change', '[name="title"]', function(e){
     e.preventDefault();
     var idx = $(this).parents('.screen-choose-body').attr('id').split('-')[3];
@@ -946,6 +954,9 @@ var update_screen_video = function(){
                 }
                 if (audio_track && (!old_track || old_track.ssrc != audio_track.ssrc)) {
                     audio_attach(this, audio_track);
+                }
+                if (audio_track && $('audio', this)[0].paused) {
+                    $('audio', this)[0].play();
                 }
             }
         });
