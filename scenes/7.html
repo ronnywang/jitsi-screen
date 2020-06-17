@@ -124,8 +124,7 @@ button {
 #team-preview {
   background-color: rgba(0,0,0,0.5);
   height: 200px;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
 }
 .log-box {
   padding: 5px;
@@ -494,7 +493,7 @@ var process_message = function(text){
     } else {
         var terms = my_data.properties.user.split('-');
         if(data.type == 'help') {
-          if (terms[0] == 'dashboard' || data.to_people_id==0) {
+          if (terms[0] == 'dashboard' || (terms[0] == 'people' && data.to_people_id==0)) {
           } else if (terms[0] == 'people' && terms[1] != data.to_people_id) {
               return;
           } else if (terms[0] == 'team' && terms[1] != data.from_team_id) {
