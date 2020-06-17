@@ -1288,9 +1288,9 @@ var onConnected = function() {
                     }
                     update_user_list();
             });
-            room.on(JitsiMeetJS.events.conference.DISPLAY_NAME_CHANGED, (id, user) => {
+            room.on(JitsiMeetJS.events.conference.DISPLAY_NAME_CHANGED, (id, name) => {
                     for (var idx in windows) {
-                        windows[idx].Jitsi.fire('display_name_changed', {id: id, name: user.getDisplayName()});
+                        windows[idx].Jitsi.fire('display_name_changed', {id: id, name: name});
                     }
                     update_user_list();
             });
