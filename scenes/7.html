@@ -231,7 +231,7 @@ select {
               <div class="row">
                 <div class="col">
                   <div id="team-preview-title">隊名</div>
-                  <div> 這裡可以放一些事先有的團隊介紹...  </div>
+                  <div id="team-preview-intro"></div>
                 </div>
                 <div class="col">
                   <h5>討論室成員</h5>
@@ -364,6 +364,7 @@ var update_view = function(){
 
 var update_team_preview = function(team_id) {
     $('#team-preview-title').text(teams[team_id]);
+    $('#team-preview-intro').text(team_intros[team_id]);
     $('#team-preview-member').html('');
     var team_members = get_team_members(team_id);
     for (var id of team_members.sorted_members) {
@@ -564,6 +565,7 @@ var process_message = function(text){
 
 $.get('team.csv', function(content){
     teams = {};
+    team_intros = {};
     people = {};
     $('#help-form [name="people"]').append($('<option value="0">所有專家</option>'));
     content.split("\n").map(function(line){
@@ -571,6 +573,7 @@ $.get('team.csv', function(content){
         var terms = line.split('|');
         if (terms[0] == 'team') { 
             teams[terms[1]] = terms[2];
+            team_intros[terms[1]] = terms[3];
         } else if (terms[0] == 'people') {
             people[terms[1]] = terms[2];
             $('#help-form [name="people"]').append($('<option></option>').attr('value', terms[1]).text(terms[2]));
