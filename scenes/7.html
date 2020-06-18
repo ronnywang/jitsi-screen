@@ -373,9 +373,6 @@ var update_team_preview = function(team_id) {
     $('#team-preview-member').html('');
     var team_members = get_team_members(team_id);
     for (var id of team_members.sorted_members) {
-        if (team_members.roles[id] == 'teamss') {
-            continue;
-        }
         var li_dom = $('<li></li>');
         li_dom.text(Jitsi.getUser(id).properties['display-name']);
         $('#team-preview-member').append(li_dom);
@@ -421,9 +418,6 @@ var get_team_members = function(team_id){
                 main_video = user.properties['viewing_user'];
             }
             roles[user.id] = 'team';
-        } else if ('teamss-' + team_id == user.properties['user']) {
-            special_members.teamss = user.id;
-            roles[user.id] = 'teamss';
         } else if (team_id == user.properties['viewing_team']) {
             roles[user.id] = 'people';
         } else {
@@ -445,10 +439,6 @@ var get_team_members = function(team_id){
             if (a[1] == 'team') {
                 return -1;
             } else if (b[1] == 'team') {
-                return 1;
-            } else if (a[1] == 'teamss') {
-                return -1;
-            } else if (b[1] == 'teamss') {
                 return 1;
             }
             return 0;
