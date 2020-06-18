@@ -91,7 +91,7 @@ var init_win_env = function(win, preview, event_listener, screen_id){
                 if ('undefined' === typeof(team_room.participants[user_id])) {
                     return null;
                 }
-                return {id: id, name: team_room.participants[user_id].getDisplayName(), me: false, properties: team_room.participants[user_id]._properties};
+                return {id: id, name: team_room.participants[user_id].getDisplayName(), me: false, properties: team_room.participants[user_id]._properties, team: teams[team_id]};
             }
             users = [];
             if (id == room.myUserId()) {
@@ -135,7 +135,7 @@ var init_win_env = function(win, preview, event_listener, screen_id){
             for (var team_id in team_rooms) {
                 team_room = team_rooms[team_id];
                 for (var id in team_room.participants) {
-                    users.push({id: 't-' + team_id + '-' + id, name: team_room.participants[id].getDisplayName(), me: false, properties: team_room.participants[id]._properties});
+                    users.push({id: 't-' + team_id + '-' + id, name: team_room.participants[id].getDisplayName(), me: false, properties: team_room.participants[id]._properties, team: teams[team_id]});
                 }
             }
             return users;
