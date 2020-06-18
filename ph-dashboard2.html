@@ -436,7 +436,13 @@ var update_screen_video = function(){
                     return;
                 }
                 var tracks = team_room.participants[uid].getTracksByMediaType('video');
-                audio_track = team_room.participants[uid].getTracksByMediaType('audio')[0];
+                // 聲音從線上揪松來
+                for (var uid in room.participants) {
+                    if (room.participants[uid].getProperty('user') == 'team-' + team_id) {
+                        audio_track = room.participants[uid].getTracksByMediaType('audio')[0];
+                        break;
+                    }
+                }
                 if ($(this).is('.audio-mute')) {
                     audio_track = null;
                 }
