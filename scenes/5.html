@@ -150,40 +150,13 @@ var anime_final = function(){
     var audio_dom = $('<audio></audio>');
     audio_dom[0].src = 'assets/sound/click.mp3';
     audio_dom[0].play();
-    var c = 0;
-    team_map = [];
+    var team_map = [];
     for (var id in teams) {
-        var dom = $($('#tmpl-team-status').html());
-        $('.team-name', dom).text(teams[id]);
-        dom.attr('id', 'team-status-' + id);
         team_map.push(id);
-        if (c == 12) c ++;
-        dom.css({
-            width: 244,
-            height: 135,
-            top: 70 + Math.floor(c / 5) * 135,
-            left: 30 + (c % 5) * 244,
-            opacity: 0,
-            'background-image': 'url(\'assets/img/avatars/team-' + id + '.png\')',
-            'background-size': 'contain',
-            'background-repeat': 'no-repeat',
-            'background-position': 'center',
-        });
-        dom.addClass('team-video-box');
-        $('body').append(dom);
-        c ++;
     }
-    users = Jitsi.getUsers();
-    for (var user of users) {
-    if (user.id.match(/^t-/) && user.name == 'team') {
-            var team_id = user.id.split('-')[1];
-            $('#team-status-' + team_id).attr('data-user', user.id).addClass('video-box').css('background-image', '').addClass('audio-mute');
-        }
-    }
-    Jitsi.reload();
 
     $('#main-video').animate({width: 244, height: 135, top: 70+135*2, left: 30+244*2}, 1000);
-    c = 0;
+    var c = 0;
     $('#speaker-title').animate({opacity: 0},1000);
     for (let id in anime_config) {
         let ac = anime_config[id];
@@ -214,15 +187,6 @@ var anime_final = function(){
 };
 
 var click = function(e){
-/*
-    if (x == anime_config.length && e.code == 'Enter') {
-        Jitsi.sendTextMessage(JSON.stringify({type: 'start', method: 'anime_final'}));
-		return;
-	} else if (x >= anime_config.length) {
-		return;
-	}
-    Jitsi.sendTextMessage(JSON.stringify({type: 'start', method: 'anime_word'}));
-    */
     if(e.code == 'Enter' && x==0) {
       console.log("start anim");
       function typeLoop() {
@@ -263,12 +227,36 @@ Jitsi.on('message_received', function(ret){
 var teams;
 $.get('team.csv', function(content){
     teams = {};
+    var c = 0;
     content.split("\n").map(function(line){
         if (line == '') return;
         var terms = line.split('|');
         if (terms[0] != 'team') return;
         teams[terms[1]] = terms[2];
+
+        var team_id = terms[1];
+        var dom = $($('#tmpl-team-status').html());
+        $('.team-name', dom).text(teams[team_id]);
+        dom.attr('id', 'team-status-' + team_id);
+        if (c == 12) c ++;
+        dom.css({
+            width: 244,
+            height: 135,
+            top: 70 + Math.floor(c / 5) * 135,
+            left: 30 + (c % 5) * 244,
+            opacity: 0,
+            'background-image': 'url(\'assets/img/avatars/team-' + team_id + '.png\')',
+            'background-size': 'contain',
+            'background-repeat': 'no-repeat',
+            'background-position': 'center',
+        });
+        dom.addClass('team-video-box');
+        $('body').append(dom);
+
+        $('#team-status-' + team_id).attr('data-team', team_id).addClass('video-box').css('background-image', '').addClass('audio-mute');
+        c ++;
     });
+    Jitsi.reload();
 
     var my_id = Jitsi.getMyID();
     var my_data = Jitsi.getUser(my_id);
