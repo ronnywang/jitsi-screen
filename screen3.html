@@ -1,0 +1,1510 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>分割畫面小幫手 :: 線上揪松 Jothon Online</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script src="//jitsi.jothon.online/libs/lib-jitsi-meet.min.js"></script>
+<script src="common-dashboard.js"></script>
+<style>
+body {
+    overflow: hidden;
+}
+#card-connect {
+	position: absolute:
+	top: 0%;
+	left: 0%;
+	width: 20%;
+	height: 50%;
+}
+
+#user-list .disable {
+    opacity: 20%;
+}
+
+#card-member{
+	position: absolute:
+	top: 50%;
+	left: 0%;
+	width: 20%;
+	height: 50%;
+}
+#card-scene-choose {
+	position: absolute;
+	top: 0%;
+	left: 20%;
+	width: 40%;
+	height: 50%;
+}
+
+.user-list-name {
+    position: absolute;
+    z-index: 20;
+}
+
+.audiolevel-area {
+    position: absolute;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(128, 255, 128);
+}
+
+#card-screen-choose {
+	position: absolute;
+	top: 50%;
+	left: 20%;
+	width: 40%;
+	height: 50%;
+}
+#card-screen-choose .row {
+    height: 100%;
+}
+#card-screen-choose #screen-list-div {
+    overflow: scroll;
+    height: 100%;
+}
+#card-scene-editor{
+	position: absolute;
+	top: 0%;
+	left: 60%;
+	width: 40%;
+	height: 50%;
+}
+#card-scene-preview {
+	position: absolute;
+	top: 50%;
+	left: 60%;
+	width: 40%;
+	height: 50%;
+}
+#card-scene-preview .card-body {
+    padding: 0;
+}
+#card-member .card-body {
+    overflow: auto;
+}
+#card-scene-choose .card-body {
+    overflow: auto;
+}
+#card-screen-choose .card-body {
+    overflow: auto;
+}
+#form-scene-editor {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+#form-scene-editor #div-scene-editor-name {
+	flex: 0;
+}
+#form-scene-editor #textarea-scene-editor-content {
+	flex: 1;
+}
+#card-scene-choose .card-body {
+	overflow: scroll;
+}
+#preview-iframe {
+    width: 100%;
+    height: 100%;
+}
+</style>
+</head>
+<body>
+
+<div class="card" id="card-connect">
+  <div class="card-header">
+	登入
+  </div>
+  <div class="card-body">
+    <form method="post" id="jitsi-form">
+		Jitsi URL: <input type="text" name="url" value="https://jitsi.president.jothon.online/president20200619"><br>
+		Password: <input type="password" name="password"><br>
+		Bot Name: <input type="text" name="bot-name" value="Jothon Helper"><br>
+		<button type="submit">Go</button>
+	</form>
+    <div id="logined-area" style="display:none">
+        <div>
+            畫面：
+            <select id="output-video" style="display:none"></select>
+            <button id="btn-access-video">同意使用攝影機</button>
+        </div>
+        <div>
+            聲音：
+            <select id="output-audio" style="display:none"></select>
+            <button id="btn-access-audio">同意使用麥克風</button>
+        </div>
+        Jitsi URL: <span id="jitsi-url"></span><br>
+		Bot Name: <input type="text" name="bot-name" value=""><br>
+    </div>
+  </div>
+</div>
+<div class="card" id="card-member">
+  <div class="card-header">
+	  成員
+  </div>
+  <div class="card-body">
+      <table class="table">
+          <thead>
+              <tr>
+                  <th>Name</th>
+                  <th>A/V</th>
+              </tr>
+          </thead>
+          <tbody id="user-list">
+          </tbody>
+      </table>
+      <div id="audio-pool"></div>
+  </div>
+</div>
+<div class="card" id="card-scene-choose">
+  <div class="card-header">
+	  場景列表
+  </div>
+  <div class="card-body">
+	<ol id="scene-list"></ol>
+  </div>
+</div>
+<div class="card" id="card-screen-choose">
+  <div class="card-header">
+	  畫面選擇
+	  <button class="btn btn-primary btn-sm" type="button" id="btn-screen-choose-add">新增畫面</button>
+  </div>
+  <div class="card-body">
+      <div class="row">
+          <div class="col-3" id="screen-list-div">
+              <div class="nav flex-column nav-pills" id="screen-list" role="tablist" aria-orientation="vertical">
+              </div>
+              <script type="text/html" id="tmpl-screen-list-item">
+                    <a class="nav-link screen-item" href="#" role="tab"></a>
+              </script>
+          </div>
+          <div class="col-9" id="screen-choose-body-area">
+              <div class="screen-choose-body" id="screen-choose-body-new">
+                  <h3>新增畫面</h3>
+                  <form id="form-screen-choose">
+                      選擇場景：<select id="screen-chooser"></select><br>
+                      畫面標題：<input type="text" placeholder="可不輸入" name="title"><br>
+                      尺寸：<input type="text" name="width" value="1600" size="5"> x <input type="text" name="height" value="900" size="5"><Br>
+                      <div class="custom-box"></div>
+                      <div class="action-box"></div>
+                      <button type="submit">新增</button>
+                  </form>
+              </div>
+              <script type="text/html" id="tmpl-screen-choose-body">
+              <div class="screen-choose-body">
+                  <h3>新增畫面</h3>
+                  <form class="form-screen-choose">
+                      視窗動作：<button class="btn-focus">最上層</button>
+                        <button class="btn-reopen">重新開啟</button>
+                        <button class="btn-reupdate">重新繪製</button>
+                    <br>
+                      選擇場景：<span class="screen-chooser"></span><br>
+                      畫面標題：<input type="text" placeholder="可不輸入" name="title"><br>
+                      尺寸：<input type="text" name="width" value="1600" size="5"> x <input type="text" name="height" value="900" size="5"><Br>
+                      <div class="custom-box"></div>
+                      <div class="action-box"></div>
+                  </form>
+              </div>
+              </script>
+          </div>
+      </div>
+  </div>
+</div>
+<div class="card" id="card-scene-editor">
+  <div class="card-header">
+	  場景編輯
+	  <button class="btn btn-primary btn-sm" type="button" id="btn-scene-editor-preview">更新預覽</button>
+	  <button class="btn btn-primary btn-sm" type="button" id="btn-scene-editor-save">儲存</button>
+  </div>
+  <div class="card-body">
+		<form id="form-scene-editor">
+			<div class="input-group input-group-sm mb-3" id="div-scene-editor-name">
+				<div class="input-group-prepend">
+					<span class="input-group-text" id="inputGroup-sizing-sm">場景名稱</span>
+				</div>
+				<input type="text" class="form-control" name="name" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+			</div>
+			<textarea class="form-control" aria-label="With textarea" name="content" id="textarea-scene-editor-content"></textarea>
+		</form>
+  </div>
+</div>
+<div class="card" id="card-scene-preview">
+  <div class="card-header">
+      <form id="resize-form" class="form-inline" style="margin-block-end: 0">
+	  場景預覽
+          <input type="text" name="width" value="1600" size="5"> x 
+          <input type="text" name="height" value="900" size="5"> 
+          <button class="btn btn-primary btn-sm" type="submit">更新預覽尺寸</button>
+      線上人數:
+      <input type="number" name="preview-user" value="4">
+      </form>
+  </div>
+  <div class="card-body">
+      <iframe id="preview-iframe"></iframe>
+  </div>
+</div>
+<script>
+var default_data = {
+    scenes: {},
+	screens: [],
+};
+var loading_scenes = [1,2,3,4,5,6,7,8,9];
+var loading_promises = [];
+var message_logs = [];
+for (var id of loading_scenes) {
+    loading_promises.push($.get('scenes/' + id + '.html').then(function(text){
+        id = text.split("\n")[0];
+        name = text.split("\n")[1];
+        content = text.split("\n").slice(2).join("\n");
+        default_data.scenes[id] = {
+            name: name,
+            content: content,
+        };
+    }));
+}
+var current_data = null;
+var windows = {};
+
+var load_data = function(data){
+	for (var scene_id in data.scenes) {
+		var li_dom = $('<li></li>');
+		var scene = data.scenes[scene_id];
+		li_dom.text(scene.name);
+		li_dom.append($('<button></button>').text('編輯預覽').addClass('btn btn-primary btn-sm btn-preview'));
+		li_dom.data('id', scene_id);
+		$('#scene-list').append(li_dom);
+	}
+    current_data = data;
+    update_screen_choose();
+};
+
+$(function(){
+    Promise.all(loading_promises).then(function(){
+        load_data(default_data);
+    });
+});
+
+$('#screen-chooser').change(function(){
+    var scene_id = $('#screen-chooser').val();
+    var user_list = get_list_from_content(current_data.scenes[scene_id].content);
+    var div_dom = $('#form-screen-choose');
+    $('.custom-box', div_dom).html('');
+    $('.custom-box', div_dom).append('觀眾：<span class="viewer-list"></span>');
+    var viewer_dom = $('<select></select>').addClass('viewer-select');
+    viewer_dom.append($('<option></option>').attr('value', 'default-預設').text('預設'));
+    $('.custom-box', div_dom).append(viewer_dom);
+    $('.custom-box', div_dom).append($('<button class="btn-add-viewer">+</button>'));
+    $('.custom-box', div_dom).append('<br>');
+    user_list.map(function(id){
+        $('.custom-box', div_dom).append($('<span></span>').text('User ' + id + '：'));
+        $('.custom-box', div_dom).append($('<select></select>').addClass('user-select').addClass('new').data('id', id).attr('name', 'user-select[' + id + ']'));
+        $('.custom-box', div_dom).append('<br>');
+    });
+    update_user_list();
+});
+
+var update_screen_choose = function(){
+    $('#screen-chooser').html('');
+	for (var scene_id in current_data.scenes) {
+        var option_dom = $('<option></option>');
+		var scene = current_data.scenes[scene_id];
+        option_dom.attr('value', scene_id).text(scene.name);
+        $('#screen-chooser').append(option_dom);
+	}
+    $('#screen-chooser').change();
+    update_user_list();
+};
+
+$('#resize-form [name="preview-user"]').change(function(){
+    var win = $('#preview-iframe')[0].contentWindow;
+    var v = parseInt($(this).val());
+    if (v > preview_fake_users.length) {
+        preview_fake_counter ++;
+        preview_fake_users.push(preview_fake_counter);
+        win.Jitsi.fire('user_joined', {id: preview_fake_counter, name: 'User-' + preview_fake_counter});
+    } else {
+        for (i = preview_fake_users.length; i > v; i --) {
+            var idx = Math.floor(Math.random() * preview_fake_users.length);
+            var deleted_user = preview_fake_users[idx];
+            preview_fake_users = preview_fake_users.slice(0, idx).concat(preview_fake_users.slice(idx + 1));
+            win.Jitsi.fire('user_left', {id: deleted_user, name: 'User-' + deleted_user});
+        }
+    }
+});
+
+var preview_fake_counter = 0;
+var preview_fake_users = [];
+
+var update_preview_video = function(){
+    $('.video-box', $('#preview-iframe')[0].contentDocument).each(function(){
+        var id = $(this).attr('data-id');
+        if ('undefined' === typeof(id)) {
+            id = 'U' + $(this).attr('data-user');
+        }
+
+        $(this).html('');
+        // draw fake video
+        var canvas = document.createElement('canvas');
+        canvas.width = 800;
+        canvas.height = 450;
+        var ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, 800, 450);
+        ctx.textAlign = 'center';
+        ctx.fillStyle = 'black';
+        ctx.font = 'normal 200px Arial';
+
+        var metric = ctx.measureText(id);
+        text_height = metric.actualBoundingBoxAscent + metric.actualBoundingBoxDescent;
+
+        ctx.strokeStyle = 'green';
+        for (var x = -canvas.height; x < canvas.width; x += 50) {
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x + canvas.height, canvas.height);
+            ctx.stroke();
+
+            ctx.moveTo(canvas.width - x, 0);
+            ctx.lineTo(canvas.width - x - canvas.height, canvas.height);
+            ctx.stroke();
+        }
+
+        ctx.strokeStyle = 'yellow';
+        ctx.moveTo(0, 0);
+        ctx.lineTo(canvas.width, 0);
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.lineTo(0, canvas.height);
+        ctx.lineTo(0, 0);
+        ctx.stroke();
+
+        var row = 0;
+        ctx.fillText(id, canvas.width / 2, canvas.height / 2 + text_height / 2);
+
+        var width = canvas.width;
+        var height = canvas.height;
+
+        var body_width = $(this)[0].scrollWidth;
+        var body_height = $(this)[0].scrollHeight;
+
+        var ratio = width / height;
+        var actual_width, actual_height;
+        if (body_height == 0 || body_height * ratio > body_width) {
+            actual_width = body_width;
+            actual_height = Math.floor(body_width / ratio);
+        } else {
+            actual_width = Math.floor(body_height * ratio);
+            actual_height = body_height;
+        }
+        var canvas_dom = $(canvas);
+        canvas_dom.css({
+            position: 'relative',
+            width: actual_width,
+            height: actual_height,
+        });
+
+        $(this).append(canvas_dom);
+    });
+};
+
+var update_preview_content = function(content){
+    var preview_fake_user = parseInt($('#resize-form [name="preview-user"]').val());
+    for (var i = 0; i < preview_fake_user; i ++) {
+        preview_fake_counter ++;
+        preview_fake_users.push(preview_fake_counter);
+    }
+    init_win_env($('#preview-iframe')[0].contentWindow, true, function(){}, 0);
+    $('#preview-iframe')[0].contentDocument.open();
+    $('#preview-iframe')[0].contentDocument.write(content);
+    update_preview_video();
+};
+
+var event_listener = function(event, screen_id, values){
+    if (event == 'action_add') {
+        var action_box = $('#screen-choose-body-' + screen_id + ' .action-box');
+        action_box.html('');
+
+        for (var name in values) {
+            var form_dom = $('<form></form>');
+            form_dom.append($('<span></span>').text(name));
+            form_dom.append($('<button type="submit">Action</button>'));
+            form_dom.data('action_values', values[name]);
+            form_dom.data('action_name', name);
+            form_dom.on('submit', function(e){
+                e.preventDefault();
+                if (room) {
+                    room.broadcastEndpointMessage({type: 'run_action', message: {
+                        screen_id: screen_id,
+                        action_name: $(this).data('action_name'),
+                        params: [],
+                    }});
+                }
+                var win = windows[screen_id];
+                if (win.closed) {
+                    return;
+                }
+                win.Jitsi.runAction($(this).data('action_name'), []);
+            });
+            action_box.append(form_dom);
+        }
+    }
+};
+
+var update_screen_data = function(){
+    $('#screen-list').html('');
+    for (var idx in current_data.screens) {
+        var screen = current_data.screens[idx];
+        var title = '畫面 ' + idx;
+        if (screen.title) {
+            title += ' : ' + screen.title;
+        }
+        var item_dom = $($('#tmpl-screen-list-item').html()).text(title);
+        item_dom.attr('id', 'screen-item-' + idx);
+        $('#screen-list').append(item_dom);
+    }
+};
+
+var check_resize = function(win, width, height){
+    if (win.innerWidth == 0 || win.outerWidth == 0) {
+        setTimeout(function(){ check_resize(win, width, height); }, 100);
+        return;
+    }
+    win.resizeTo(width + win.outerWidth - win.innerWidth, height + win.outerHeight - win.innerHeight);
+};
+
+var get_list_from_content = function(content){
+    var dom = $('<div></div>').append($(content));
+    var list_map = {};
+    $('.video-box', dom).each(function(){
+        var id = $(this).data('id');
+        if ('undefined' === typeof(id)) {
+            return;
+        }
+        list_map[id] = true;
+    });
+    var list = [];
+    for (var id in list_map) {
+        list.push(id);
+    }
+    return list;
+};
+
+$('#form-screen-choose').submit(function(e){
+	e.preventDefault();
+    var scene_id = $('#screen-chooser').val();
+    var title = $('[name="title"]', this).val();
+    var width = parseInt($('[name="width"]', this).val());
+    var height = parseInt($('[name="height"]', this).val());
+    var user_select = {};
+
+    $('#form-screen-choose .user-select').each(function(){
+        user_select[$(this).data('id')] = $(this).val();
+    });
+
+    var idx = current_data.screens.length;
+    current_data.screens.push({
+        scene_id: scene_id,
+        title: title,
+        width: width,
+        height: height,
+        viewers: $('#form-screen-choose .btn-delete-viewer').map(function(a){ return $(this).data('viewer'); }).toArray(),
+        user_select: user_select,
+    });
+    var div_dom = $($('#tmpl-screen-choose-body').html());
+    $('h3', div_dom).text('畫面 ' + idx + ' ' + title);
+    $('.screen-chooser', div_dom).text(current_data.scenes[scene_id].name);
+    $('[name="title"]', div_dom).val(title);
+    $('[name="width"]', div_dom).val(width);
+    $('[name="height"]', div_dom).val(height);
+    var user_list = get_list_from_content(current_data.scenes[scene_id].content);
+    $('.custom-box', div_dom).append('觀眾：<span class="viewer-list"></span>');
+    current_data.screens[idx].viewers.map(function(viewer){
+            $('.viewer-list', div_dom).append($('<button></button>').addClass('btn-delete-viewer').data('viewer', viewer).text(viewer.split('-')[1]));
+    });
+    var viewer_dom = $('<select></select>').addClass('viewer-select');
+    viewer_dom.append($('<option></option>').attr('value', 'default-預設').text('預設'));
+    $('.custom-box', div_dom).append(viewer_dom);
+    $('.custom-box', div_dom).append($('<button class="btn-add-viewer">+</button>'));
+    $('.custom-box', div_dom).append('<br>');
+    user_list.map(function(id){
+        $('.custom-box', div_dom).append($('<span></span>').text('User ' + id + '：'));
+        $('.custom-box', div_dom).append($('<select></select>').addClass('user-select').addClass('new').data('id', id).addClass('user-select-' + id));
+        $('.custom-box', div_dom).append('<br>');
+    });
+    div_dom.attr('id', 'screen-choose-body-' + idx).data('screen_id', idx);
+
+    $('#screen-choose-body-area').append(div_dom);
+    update_user_list();
+    user_list.map(function(id){
+        $('.user-select-' + id).each(function(){
+            $(this).val($('#form-screen-choose [name="user-select[' + id + ']"]').val());
+        });
+    });
+
+    $('#screen-choose-body-area .screen-choose-body').hide();
+    $('.btn-reopen', div_dom).hide();
+    div_dom.show();
+    update_screen_data();
+    $('.screen-item').removeClass('active');
+    $('#screen-item-' + idx).addClass('active');
+
+    var win = window.open('', 'screen-' + idx, config='menubar=no,status=no,toolbar=no,height=' + (height + 100) + ',width=' + (width + 100));
+    check_resize(win, width, height);
+    init_win_env(win, false, event_listener, idx);
+    win.document.open();
+    win.document.write(current_data.scenes[scene_id].content);
+    if (title) {
+        win.document.title = '畫面 ' + title;
+    } else {
+        win.document.title = '畫面 ' + idx;
+    }
+    win.onunload = function(){
+        $('#screen-choose-body-' + idx + ' .btn-reopen').show();
+        $('#screen-choose-body-' + idx + ' .btn-focus').hide();
+        win._isUnloading = true;
+        auto_detach_track();
+    };
+    $(win.document.body).css('margin', 0);
+    $('.video-box', win.document).ready(function(){
+        update_screen_video();
+    });
+    windows[idx] = win;
+
+    // XXX
+});
+
+$('#screen-choose-body-area').on('click', '.btn-focus', function(e){
+    e.preventDefault();
+    var idx = $(this).parents('.screen-choose-body').attr('id').split('-')[3];
+    windows[idx].focus();
+});
+
+$('#screen-choose-body-area').on('click', '.btn-reupdate', function(e){
+    e.preventDefault();
+    var idx = $(this).parents('.screen-choose-body').attr('id').split('-')[3];
+    windows[idx].Jitsi.reload();
+});
+
+$('#screen-choose-body-area').on('change', '[name="title"]', function(e){
+    e.preventDefault();
+    var idx = $(this).parents('.screen-choose-body').attr('id').split('-')[3];
+    var title = $(this).val();
+    if (title) {
+        windows[idx].document.title = '畫面 ' + title;
+    } else {
+        windows[idx].document.title = '畫面 ' + idx;
+    }
+});
+
+$('#screen-choose-body-area').on('click', '.btn-reopen', function(e){
+    e.preventDefault();
+    var idx = $(this).parents('.screen-choose-body').attr('id').split('-')[3];
+    width = current_data.screens[idx].width;
+    height = current_data.screens[idx].height;
+    scene_id = current_data.screens[idx].scene_id;
+    var win = window.open('', 'screen-' + idx, config='menubar=no,status=no,toolbar=no,height=' + (height + 100) + ',width=' + (width + 100));
+    if (current_data.screens[idx].title) {
+        win.document.title = '畫面 ' + current_data.screens[idx].title;
+    } else {
+        win.document.title = '畫面 ' + idx;
+    }
+    win.onunload = function(){
+        $('#screen-choose-body-' + idx + ' .btn-reopen').show();
+        $('#screen-choose-body-' + idx + ' .btn-focus').hide();
+    };
+    $('#screen-choose-body-' + idx + ' .btn-reopen').hide();
+    $('#screen-choose-body-' + idx + ' .btn-focus').show();
+    check_resize(win, width, height);
+    init_win_env(win, false, event_listener, idx);
+    win.document.open();
+    win.document.write(current_data.scenes[scene_id].content);
+    win.onunload = function(){
+        $('#screen-choose-body-' + idx + ' .btn-reopen').show();
+        $('#screen-choose-body-' + idx + ' .btn-focus').hide();
+        win._isUnloading = true;
+        auto_detach_track();
+    };
+    windows[idx] = win;
+    update_screen_video();
+});
+
+$('#btn-screen-choose-add').click(function(e){
+    e.preventDefault();
+    $('#screen-choose-body-area .screen-choose-body').hide();
+    $('.screen-item').removeClass('active');
+    $('#screen-choose-body-new').show();
+});
+
+$('#screen-list').on('click', '.screen-item', function(e){
+    e.preventDefault();
+    $('#screen-choose-body-area .screen-choose-body').hide();
+    $('.screen-item').removeClass('active');
+    var idx = $(this).attr('id').split('-')[2];
+    $('#screen-choose-body-' + idx).show();
+    $(this).addClass('active');
+});
+
+$('#scene-list').on('click', '.btn-preview', function(e){
+	e.preventDefault();
+    var scene = current_data.scenes[$(this).parents('li').data('id')];
+    $('#form-scene-editor').data('scene_id', $(this).parents('li').data('id'));
+    $('#form-scene-editor [name="name"]').val(scene.name);
+    $('#form-scene-editor [name="content"]').val(scene.content);
+    update_preview_content(scene.content);
+});
+
+$('#btn-scene-editor-preview').click(function(e){
+    var content = $('#form-scene-editor [name="content"]').val();
+    update_preview_content(content);
+});
+
+$('#btn-scene-editor-save').click(function(e){
+    var content = $('#form-scene-editor [name="content"]').val();
+    current_data.scenes[$('#form-scene-editor').data('scene_id')].content = content;
+});
+
+var update_preview_size = function(){
+    var width = parseInt($('#card-scene-preview .card-header [name="width"]').val());
+    var height = parseInt($('#card-scene-preview .card-header [name="height"]').val());
+
+    var body_width = $('#card-scene-preview .card-body')[0].scrollWidth;
+    var body_height = $('#card-scene-preview .card-body')[0].scrollHeight;
+
+    var ratio = width / height;
+    var actual_width, actual_height;
+    if (body_height * ratio > body_width) {
+        actual_width = body_width;
+        actual_height = body_width / ratio;
+    } else {
+        actual_width = body_height * ratio;
+        actual_height = body_height;
+    }
+    $('#preview-iframe').width(actual_width);
+    $('#preview-iframe').height(actual_height);
+    $($('#preview-iframe')[0].contentDocument.body).css('zoom', actual_width / width).css('margin', 0);
+};
+
+update_preview_size();
+$('#resize-form').submit(function(e){
+    e.preventDefault();
+    update_preview_size();
+});
+
+var matches = location.search.match(/\?url=(.*)/);
+if (matches) {
+    $('[name="url"]').val(decodeURIComponent(matches[1]));
+}
+
+const initOptions = {
+    disableAudioLevels: false,
+
+    disableSimulcast: true,
+    // The ID of the jidesha extension for Chrome.
+    desktopSharingChromeExtId: 'mbocklcggfhnbahlnepmldehdhpjfcjp',
+
+    // Whether desktop sharing should be disabled on Chrome.
+    desktopSharingChromeDisabled: false,
+
+    // The media sources to use when using screen sharing with the Chrome
+    // extension.
+    desktopSharingChromeSources: [ 'screen', 'window' ],
+
+    // Required version of Chrome extension
+    desktopSharingChromeMinExtVersion: '0.1',
+
+    // Whether desktop sharing should be disabled on Firefox.
+    desktopSharingFirefoxDisabled: false,
+};
+
+var jitsi_domain;
+var jitsi_room;
+var team_connections = {};
+var team_rooms = {}; 
+var connection;
+var onDeviceListChanged = function(devices) {
+    update_devices();
+};
+
+$('#jitsi-form').submit(function(e){
+        e.preventDefault();
+        var matches = $('[name="url"]').val().match('^https://([^/]*)/(.*)$');
+        if (!matches) {
+            alert('網址不正確');
+            return;
+        }
+        $('#jitsi-form').hide();
+        window.history.pushState('', '', '?url=' + encodeURIComponent(matches[0]));
+        jitsi_domain = matches[1];
+        jitsi_room = matches[2].toLowerCase();
+
+        JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.INFO);
+        JitsiMeetJS.init(initOptions);
+		const options = {
+			hosts: {
+				domain: jitsi_domain,
+				muc: 'conference.' + jitsi_domain,
+				focus: 'focus.' + jitsi_domain,
+			},
+			bosh: 'wss://' + jitsi_domain + '/xmpp-websocket',
+			websocket: 'wss://' + jitsi_domain + '/xmpp-websocket',
+
+
+		   // The name of client node advertised in XEP-0115 'c' stanza
+		   clientNode: 'http://jitsi.org/jitsimeet'
+		};
+        options.bosh += '?room=' + jitsi_room;
+        options.websocket += '?room=' + jitsi_room;
+        connection = new JitsiMeetJS.JitsiConnection(null, null, options);
+        connection.addEventListener( JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnected);
+        connection.addEventListener( JitsiMeetJS.events.connection.CONNECTION_FAILED, function() { alert('連線失敗'); });
+        JitsiMeetJS.mediaDevices.addEventListener(
+            JitsiMeetJS.events.mediaDevices.DEVICE_LIST_CHANGED,
+        onDeviceListChanged);
+
+    if ($('[name="password"]').val()) {
+        connection.connect({
+            password:$('[name="password"]').val(),
+        });
+    } else {
+        connection.connect();
+    }
+
+    for (var id in teams) {
+        options.bosh += '?room=preteam' + id;
+        options.websocket += '?room=preteam' + id;
+        team_connections[id] = new JitsiMeetJS.JitsiConnection(null, null, options);
+
+        team_connections[id].addEventListener( JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, teamConnectiond(id, 'preteam' + id));
+        team_connections[id].addEventListener( JitsiMeetJS.events.connection.CONNECTION_FAILED, function() { alert('連線失敗'); });
+        team_connections[id].connect();
+    }
+});
+
+var teamConnectiond = function(team_id, jitsi_room){
+    return function(){
+        var confOptions = {
+            openBridgeChannel: true,
+            confID: jitsi_domain + '/' + jitsi_room,
+        };
+
+        team_rooms[team_id] = team_connections[team_id].initJitsiConference(jitsi_room, confOptions);
+    
+        team_rooms[team_id].setDisplayName('揪松幫手');
+        team_rooms[team_id].on(
+                JitsiMeetJS.events.conference.CONFERENCE_FAILED,
+                function(error) {
+                alert("CONFERENCE_FAILED:" + error);
+                });
+        team_rooms[team_id].on(
+                JitsiMeetJS.events.conference.CONFERENCE_ERROR,
+                function(error) {
+                alert("CONFERENCE_ERROR:" + error);
+                });
+        team_rooms[team_id].on(
+                JitsiMeetJS.events.conference.CONFERENCE_JOINED,
+                function(){
+                team_rooms[team_id].on(JitsiMeetJS.events.conference.PARTICIPANT_CONN_STATUS_CHANGED, (id, status) => {
+                    restore_inactive_track();
+                });
+                team_rooms[team_id].on(JitsiMeetJS.events.conference.USER_JOINED, (id, user) => {
+                    for (var idx in windows) {
+                        windows[idx].Jitsi.fire('user_joined', {id: 't-' + team_id + '-' + id, name: user.getDisplayName()});
+                    }
+                    update_user_list();
+                });
+                team_rooms[team_id].on(JitsiMeetJS.events.conference.USER_LEFT, (id, user) => {
+                    for (var idx in windows) {
+                        windows[idx].Jitsi.fire('user_left', {id: 't-' + team_id + '-' + id, name: user.getDisplayName()});
+                    }
+                });
+                team_rooms[team_id].on(JitsiMeetJS.events.conference.TRACK_ADDED, (track) => {
+                    update_screen_video();
+                    for (var idx in windows) {
+                        windows[idx].Jitsi.fire('track_added', {track: track});
+                    }
+                });
+                team_rooms[team_id].on(JitsiMeetJS.events.conference.TRACK_REMOVED, (track) => {
+                    update_screen_video();
+                    for (var idx in windows) {
+                        windows[idx].Jitsi.fire('track_removed', {track: track});
+                    }
+                });
+        });
+
+        team_rooms[team_id].join();
+    };
+};
+
+$('#screen-choose-body-area').on('click', '.btn-add-viewer', function(e){
+    e.preventDefault();
+    var box_dom = $(this).parents('.custom-box');
+    var viewer = $('.viewer-select', box_dom).val();
+    for (var i = 0; i < $('.btn-delete-viewer', box_dom).length; i ++) {
+        if ($('.btn-delete-viewer', box_dom).eq(i).data('viewer') == viewer) {
+            // viewer has been added, skip
+            return;
+        }
+    }
+    $('.viewer-list', box_dom).append($('<button></button>').addClass('btn-delete-viewer').data('viewer', viewer).text(viewer.split('-')[1]));
+    var screen_id = $(this).parents('.screen-choose-body').data('screen_id');
+    if ('undefined' === typeof(screen_id)) {
+        return;
+    }
+    for (var checking_screen_id in current_data.screens) {
+        if (checking_screen_id == screen_id) {
+            continue;
+        }
+        if (current_data.screens[checking_screen_id].viewers.indexOf(viewer) >= 0) {
+            $('#screen-choose-body-' + checking_screen_id + ' .btn-delete-viewer').each(function(){
+                if ($(this).data('viewer') == viewer) {
+                    $(this).remove();
+                }
+            });
+            current_data.screens[checking_screen_id].viewers = $('#screen-choose-body-' + checking_screen_id + ' .btn-delete-viewer').map(function(a){ return $(this).data('viewer'); }).toArray()
+        }
+    }
+    current_data.screens[screen_id].viewers = $('.btn-delete-viewer', box_dom).map(function(a){ return $(this).data('viewer'); }).toArray()
+    if (room && has_scene_to_response()) {
+        console.log('broadcast scenes to all viewers');
+        current_data.version = (new Date).getTime();
+        room.setLocalParticipantProperty('scene_version', current_data.version);
+        room.broadcastEndpointMessage({type: 'update_scene', message: get_scene_data()});
+    }
+});
+var get_scene_data = function(){
+    var scenes = {};
+    for (var screen_id in current_data.screens) {
+        if (current_data.screens[screen_id].viewers.length) {
+            scenes[current_data.screens[screen_id].scene_id] = current_data.scenes[current_data.screens[screen_id].scene_id];;
+        }
+    }
+    return {current_data: {
+        screens: current_data.screens,
+        scenes: scenes,
+        version: current_data.version,
+    }};
+};
+
+$('#screen-choose-body-area').on('click', '.btn-delete-viewer', function(e){
+    e.preventDefault();
+    var box_dom = $(this).parents('.custom-box');
+    var screen_id = $(this).parents('.screen-choose-body').data('screen_id');
+    var deleting_viewer = $(this).data('viewer');
+    $(this).remove();
+    if ('undefined' === typeof(screen_id)) {
+        return;
+    }
+    current_data.screens[screen_id].viewers = $('.btn-delete-viewer', box_dom).map(function(a){ return $(this).data('viewer'); }).toArray()
+    if (room) {
+        current_data.version = (new Date).getTime();
+        room.setLocalParticipantProperty('scene_version', current_data.version);
+        room.broadcastEndpointMessage({type: 'update_scene', message: get_scene_data()});
+    }
+});
+
+$('#screen-choose-body-area').on('change', '.user-select', function(e){
+    var screen_choose_body_dom = $(this).parents('.screen-choose-body');
+    var screen_id = screen_choose_body_dom.data('screen_id');
+    if ('undefined' === typeof(screen_id)) {
+        return;
+    }
+
+    $('.user-select', screen_choose_body_dom).each(function(){
+        current_data.screens[screen_id].user_select[$(this).data('id')] = $(this).val();
+    });
+    current_data.version = (new Date).getTime();
+    room.setLocalParticipantProperty('scene_version', current_data.version);
+    room.broadcastEndpointMessage({type: 'update_scene', message: get_scene_data()});
+    update_screen_video();
+});
+
+$('#btn-access-video').click(function(e){
+    e.preventDefault();
+    JitsiMeetJS.createLocalTracks({ devices: [ 'video' ] })
+    .then(update_devices)
+    .catch(error => {
+        throw error;
+    });
+});
+$('#btn-access-audio').click(function(e){
+    e.preventDefault();
+    JitsiMeetJS.createLocalTracks({ devices: [ 'audio' ] })
+    .then(update_devices)
+    .catch(error => {
+        throw error;
+    });
+});
+
+var update_screen_video = function(){
+    auto_detach_track();
+    for (var id in selected_users) {
+        if (selected_users[id] == 'select') {
+            delete(selected_users[id]);
+        }
+    }
+    for (var idx in windows) {
+        var user_select = current_data.screens[idx].user_select;
+        win = windows[idx];
+        if (win.closed) {
+            continue;
+        }
+        $('.video-box', win.document).each(function(){
+            user_id = user_select[$(this).attr('data-id')];
+            if ('undefined' === typeof(user_id)) {
+                user_id = $(this).attr('data-user');
+            }
+            if (!$('video', this).length) {
+                $(this).append($('<video style="width: 100%; height: 100%; border: 0; margin: 0; padding: 0; display: none" autoplay="1" muted></video>'));
+                $(this).addClass('no-video');
+            }
+            if (!$('audio', this).length) {
+                $(this).append($('<audio autoplay="1"></audio>'));
+                $(this).addClass('no-audio');
+            }
+            var video_dom = $('video', this);
+            var audio_dom = $('audio', this);
+            $(this).attr('data-result-user', user_id);
+            if ('undefined' === typeof(user_id) || user_id == 'none') {
+                var old_track = video_dom[0].__track;
+                if (old_track) {
+                    video_detach(this, old_track);
+                }
+            } else if (user_id == 'viewer') {
+                var track = room.getLocalVideoTrack();
+                var old_track = video_dom[0].__track;
+                if (old_track) {
+                    video_detach(this, old_track);
+                }
+                if (track) {
+                    video_attach(this, track);
+                }
+            } else if (user_id.match && user_id.match(/^camera-/)) {
+                var device_id = user_id.split('-')[1];
+                get_local_video_track(device_id, function(track){
+                    var old_track = video_dom[0].__track;
+                    if (old_track) {
+                        video_detach(this, old_track);
+                    }
+                    video_attach(this, track);
+                });
+            } else {
+                var audio_track = null;
+                if (user_id == room.myUserId()) {
+                    var track = room.getLocalVideoTrack();
+                    var tracks = [];
+                    if ('undefined' !== typeof(track)) {
+                        tracks.push(track);
+                    }
+                } else if ('undefined' !== typeof(room.participants[user_id])) {
+                    var tracks = room.participants[user_id].getTracksByMediaType('video');
+                    audio_track = room.participants[user_id].getTracksByMediaType('audio')[0];
+                    if ($(this).is('.audio-mute')) {
+                        audio_track = null;
+                    }
+                } else if (user_id.match(/^t-/)) {
+                    var terms = user_id.split('-');
+                    var team_id = terms[1];
+                    var uid = terms[2];
+                    var team_room = team_rooms[team_id];
+                    var tracks = team_room.participants[uid].getTracksByMediaType('video');
+                    audio_track = team_room.participants[uid].getTracksByMediaType('audio')[0];
+                    if ($(this).is('.audio-mute')) {
+                        audio_track = null;
+                    }
+                } else {
+                    var old_track = video_dom[0].__track;
+                    if (old_track) {
+                        video_detach(this, old_track);
+                    }
+                    old_track = audio_dom[0].__track;
+                    if (old_track) {
+                        audio_detach(this, old_track);
+                    }
+                    return;
+                }
+
+                var old_track = video_dom[0].__track;
+                if (old_track && (tracks.length == 0 || old_track.ssrc != tracks[0].ssrc || old_track.deviceId != tracks[0].deviceId)) {
+                    video_detach(this, old_track);
+                }
+                if (tracks.length) {
+                    if (!old_track || old_track.ssrc != tracks[0].ssrc || old_track.deviceId != tracks[0].deviceId) {
+                        video_attach(this, tracks[0]);
+                    }
+                    if ($(this).attr('data-select') == 'true') {
+                        selected_users[user_id] = 'select';
+                    }
+                }
+
+                var old_track = audio_dom[0].__track;
+                if (old_track && (!audio_track || old_track.ssrc != audio_track.ssrc)) {
+                    audio_detach(this, old_track);
+                }
+                if (audio_track && (!old_track || old_track.ssrc != audio_track.ssrc)) {
+                    audio_attach(this, audio_track);
+                }
+                if (audio_track && $('audio', this)[0].paused) {
+                    $('audio', this)[0].play();
+                }
+            }
+        });
+        win.Jitsi.fire('user_box_updated', {});
+    }
+    reselected_users();
+};
+
+$('[name="bot-name"]').change(function(){
+    if (room) {
+        room.myName = $(this).val();
+        room.setDisplayName(room.myName);
+    }
+});
+
+var update_user_list = function(){
+    $('#user-list').html('');
+    var tr_dom = $('<tr></tr>');
+    tr_dom.append($('<td></td>').append($('<span class="user-list-name"></span>').text('[me]' + $('[name="bot-name"]').val())).append($('<div class="audiolevel-area"></div>')).css('position', 'relative'));
+    var td_dom = $('<td></td>');
+    if (room) {
+        tr_dom.attr('id', 'user-list-' + room.myUserId());
+    } else {
+        tr_dom.attr('id', 'user-list-me');
+    }
+    td_dom.append($('<i class="fas microphone-stat"></i>'));
+    td_dom.append($('<i class="fas video-stat fa-video"></i>'));
+    tr_dom.append(td_dom);
+
+    if (!room || !room.getLocalAudioTrack()) {
+        $('.microphone-stat', td_dom).addClass('fa-microphone-alt-slash');
+    } else {
+        $('.microphone-stat', td_dom).addClass('fa-microphone-alt');
+    }
+    if (!room || !room.getLocalVideoTrack()) {
+        $('.video-stat', td_dom).addClass('fa-video-slash');
+    } else {
+        $('.video-stat', td_dom).addClass('fa-video');
+    }
+
+    $('#user-list').append(tr_dom);
+
+    $('.user-select').each(function(){
+        var current_user = null;
+        if (!$(this).is('.new')) {
+            current_user = $(this).val();
+        } else {
+            $(this).removeClass('new');
+        }
+        
+        $(this).html('');
+        option_dom = $('<option></option>');
+        option_dom.html('不顯示').val('none');
+        $(this).append(option_dom);
+
+
+        for (var device of device_list.video) {
+            var option_dom = $('<option></option>');
+            option_dom.html('Camera ' + device.label).val('camera-' + device.deviceId);
+            $(this).append(option_dom);
+        }
+
+        option_dom = $('<option></option>');
+        option_dom.text('viewer').val('viewer');
+        $(this).append(option_dom);
+
+        if (room) {
+            option_dom = $('<option></option>');
+            option_dom.html(room.myUserId() + '. Me').val(room.myUserId());
+            $(this).append(option_dom);
+            for (var id in room.participants) {
+                var option_dom = $('<option></option>');
+                option_dom.html(id + '. ' + room.participants[id].getDisplayName()).val(id);
+                $(this).append(option_dom);
+            }
+        }
+        for (var team_id in team_rooms) {
+            var team_room = team_rooms[team_id];
+            for (var user_id in team_room.participants) {
+                var option_dom = $('<option></option>');
+                if (team_room.participants[user_id].getDisplayName() == '揪松幫手') continue;
+                option_dom.html('t-' + team_id + '-' + user_id + '. ' + team_room.participants[user_id].getDisplayName()).val('t-' + team_id + '-' + user_id);
+                $(this).append(option_dom);
+            }
+        }
+
+        if (null !== current_user) {
+            $(this).val(current_user);
+        }
+    });
+
+    if (room) {
+        for (var id in room.participants) {
+            var tr_dom = $('<tr></tr>');
+            tr_dom.attr('id', 'user-list-' + id);
+            tr_dom.append($('<td></td>').append($('<span class="user-list-name"></span>').text(room.participants[id].getDisplayName())).attr('title', id).append($('<div class="audiolevel-area"></div>')).css('position', 'relative'));
+            var td_dom = $('<td></td>');
+            td_dom.append($('<i class="fas microphone-stat"></i>'));
+            td_dom.append($('<i class="fas video-stat fa-video"></i>'));
+            tr_dom.append(td_dom);
+            audio_track = room.participants[id].getTracksByMediaType('audio')[0];
+            if (!audio_track || audio_track.muted) {
+                $('.microphone-stat', td_dom).addClass('fa-microphone-alt-slash');
+            } else {
+                $('.microphone-stat', td_dom).addClass('fa-microphone-alt');
+            }
+            if (audio_track && !$(`#audio-${id}`).length) {
+                var audio_dom = $('<audio autoplay="1"></audio>').attr('id', 'audio-' + id);
+                $('#user-list').append(audio_dom);
+                //audio_track.attach(audio_dom[0]);
+            }
+            var audio_dom = $(`#audio-${id}`)[0];
+            if (audio_dom && audio_dom.muted) {
+                $('.microphone-stat', td_dom).addClass('disable');
+            }
+
+            video_track = room.participants[id].getTracksByMediaType('video')[0];
+            if (!video_track || video_track.muted) {
+                $('.video-stat', td_dom).addClass('fa-video-slash');
+            } else {
+                $('.video-stat', td_dom).addClass('fa-video');
+            }
+            $('#user-list').append(tr_dom);
+        }
+    }
+};
+
+var room;
+var device_list = {audio: [], video: []};
+
+$('#output-audio').change(function(){
+    var id = $(this).val();
+    var promises = [];
+    for (var track of room.getLocalTracks()) {
+        if (track.getType() != 'audio') continue;
+        promises.push(room.removeTrack(track));
+    }
+    $(`#user-list-${room.myUserId()} .microphone-stat`).removeClass('fa-microphone-alt').addClass('fa-microphone-alt-slash');
+
+    Promise.all(promises).then(function(){
+        if ('none' == id) {
+        } else {
+            get_local_audio_track(id, function(track){
+                $(`#user-list-${room.myUserId()} .microphone-stat`).removeClass('fa-microphone-alt-slash').addClass('fa-microphone-alt');
+                room.addTrack(track);
+            });
+        }
+    });
+});
+
+$('#output-video').change(function(){
+    var id = $(this).val();
+    var promises = [];
+    for (var track of room.getLocalTracks()) {
+        if (track.getType() != 'video') continue;
+        promises.push(room.removeTrack(track));
+        if (track.videoType == 'desktop') {
+            track.dispose();
+        }
+        $(`#user-list-${room.myUserId()} .video-stat`).removeClass('fa-video').addClass('fa-video-slash');
+    }
+
+    Promise.all(promises).then(function(){
+        if ('none' == id) {
+            update_screen_video();
+        } else if ('screenshare' == id) {
+            JitsiMeetJS.createLocalTracks({ devices: [ 'desktop' ] })
+            .then(function(tracks){
+                room.addTrack(tracks[0]).then(update_screen_video);
+                $(`#user-list-${room.myUserId()} .video-stat`).addClass('fa-video').removeClass('fa-video-slash');
+            })
+            .catch(error => {
+            });
+        } else {
+            get_local_video_track(id, function(track){
+                room.addTrack(track).then(update_screen_video);
+                $(`#user-list-${room.myUserId()} .video-stat`).addClass('fa-video').removeClass('fa-video-slash');
+            });
+        }
+    });
+});
+
+var update_devices = function(tracks) {
+    if (JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output')) {
+        JitsiMeetJS.mediaDevices.enumerateDevices(devices => {
+            $('#output-video').html('');
+            $('#output-audio').html('');
+            device_list.audio = [];
+            device_list.video = [];
+            $('#output-video').append($('<option></option>').attr('value', 'none').text('不使用'));
+            $('#output-video').append($('<option></option>').attr('value', 'screenshare').text('螢幕分享'));
+            $('#output-audio').append($('<option></option>').attr('value', 'none').text('不使用'));
+            var has_video = false;
+            var has_audio = false;
+            for (var device of devices) {
+                if (device.kind == 'audioinput' && device.label != '') {
+                    $('#output-audio').append($('<option></option>').attr('value', device.deviceId).text(device.label));
+                    has_audio = true;
+                    device_list.audio.push(device);
+                }
+                if (device.kind == 'videoinput' && device.label != '') {
+                    $('#output-video').append($('<option></option>').attr('value', device.deviceId).text(device.label));
+                    has_video = true;
+                    device_list.video.push(device);
+                }
+            }
+            if (has_audio) {
+                $('#output-audio').show();
+                $('#btn-access-audio').hide();
+            }
+            if (has_video) {
+                $('#output-video').show();
+                $('#btn-access-video').hide();
+            }
+        });
+    }
+    update_user_list();
+};
+
+var has_scene_to_response = function() {
+    if (current_data.screens.length == 0) {
+        return false;
+    }
+    for (var screen_id in current_data.screens) {
+        if (current_data.screens[screen_id].viewers.length) {
+            return true;
+        }
+    }
+    return false;
+};
+
+var onConnected = function() {
+    var confOptions = {
+        openBridgeChannel: true,
+        confID: jitsi_domain + '/' + jitsi_room,
+        p2p: {enabled: false},
+
+    };
+
+    $('#logined-area').show();
+    $('#jitsi-url').text('https://' + jitsi_domain + '/' + jitsi_room);
+    $('#logined-area [name="bot-name"]').val($('#jitsi-form [name="bot-name"]').val());
+    update_devices();
+
+    room = connection.initJitsiConference(jitsi_room, confOptions);
+    room.myName = $('#jitsi-form [name="bot-name"]').val();
+    room.setDisplayName($('#jitsi-form [name="bot-name"]').val());
+    room.on(
+        JitsiMeetJS.events.conference.CONFERENCE_FAILED,
+        function(error) {
+            alert("CONFERENCE_FAILED:" + error);
+        });
+    room.on(
+        JitsiMeetJS.events.conference.CONFERENCE_ERROR,
+        function(error) {
+            alert("CONFERENCE_ERROR:" + error);
+        });
+    room.on(
+        JitsiMeetJS.events.conference.CONFERENCE_JOINED,
+        function(){
+            for (var id in room.participants) {
+                if (!$(`#audio-${id}`).length) {
+                    var audio_dom = $('<audio autoplay="1"></audio>').attr('id', 'audio-' + id);
+                    $('#audio-pool').append(audio_dom);
+                }
+
+                audio_track = room.participants[id].getTracksByMediaType('audio')[0];
+                if (audio_track) {
+                    //audio_track.attach(audio_dom[0]);
+                }
+            }
+            update_user_list();
+
+            room.on(JitsiMeetJS.events.conference.ENDPOINT_MESSAGE_RECEIVED, (participant, message) => {
+                    if (message.type == 'request_scene') {
+                        if (has_scene_to_response()) {
+                            console.log('User ' + participant.getId() + ' requested scenes, responsed');
+                            room.sendEndpointMessage(participant.getId(), {type: 'response_scene', message: get_scene_data()});
+                        } else {
+                            console.log('User ' + participant.getId() + ' requested scenes, no scene to response');
+                        }
+                    }
+            });
+
+            room.on(JitsiMeetJS.events.conference.PARTICIPANT_CONN_STATUS_CHANGED, (id, status) => {
+                    if (status == 'inactive' && 'undefined' === typeof(selected_users[id])) {
+                        var attach_count = 0;
+                        for (var track of room.participants[id].getTracksByMediaType('video')) {
+                            attach_count += track.containers.length;
+                        }
+                        if (attach_count) {
+                            selected_users[id] = 'restoring';
+                            reselected_users();
+                        }
+                    } else if (status == 'active' && 'restoring' === selected_users[id]) {
+                        delete(selected_users[id]);
+                        reselected_users();
+                    }
+            });
+            room.on(JitsiMeetJS.events.conference.PARTICIPANT_PROPERTY_CHANGED, (user, text, ts) => {
+                    var id = user.getId();
+                    for (var idx in windows) {
+                        windows[idx].Jitsi.fire('property_changed', {id: id, text: text});
+                    }
+            });
+            room.on(JitsiMeetJS.events.conference.MESSAGE_RECEIVED, (id, text, ts) => {
+                    message_logs.push({id: id, text: text, ts: ts});
+                    for (var idx in windows) {
+                        windows[idx].Jitsi.fire('message_received', {id: id, text: text, ts: ts});
+                    }
+            });
+            room.on(JitsiMeetJS.events.conference.USER_JOINED, (id, user) => {
+                    if (!$(`#audio-${id}`).length) {
+                        var audio_dom = $('<audio autoplay="1"></audio>').attr('id', 'audio-' + id);
+                        $('#audio-pool').append(audio_dom);
+                    }
+                    for (var idx in windows) {
+                        windows[idx].Jitsi.fire('user_joined', {id: id, name: user.getDisplayName()});
+                    }
+                    update_user_list();
+            });
+            room.on(JitsiMeetJS.events.conference.USER_LEFT, (id, user) => {
+                    for (var idx in windows) {
+                        windows[idx].Jitsi.fire('user_left', {id: id, name: user.getDisplayName()});
+                    }
+                    update_user_list();
+            });
+            room.on(JitsiMeetJS.events.conference.DISPLAY_NAME_CHANGED, (id, name) => {
+                    for (var idx in windows) {
+                        windows[idx].Jitsi.fire('display_name_changed', {id: id, name: name});
+                    }
+                    update_user_list();
+            });
+            room.on(JitsiMeetJS.events.conference.TRACK_ADDED, (track) => {
+                    if (track.type == 'audio' && track.ownerEndpointId && $('#audio-' + track.ownerEndpointId).length) {
+                        //track.attach($('#audio-' + track.ownerEndpointId)[0]);
+                    }
+                    for (var idx in windows) {
+                        windows[idx].Jitsi.fire('track_added', {track: track});
+                    }
+                    update_user_list();
+            });
+            room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, (track) => {
+                    if (track.type == 'audio' && track.ownerEndpointId && $('#audio-' + track.ownerEndpointId).length) {
+                        track.detach($('#audio-' + track.ownerEndpointId)[0]);
+                    }
+                    for (var idx in windows) {
+                        windows[idx].Jitsi.fire('track_removed', {track: track});
+                    }
+                    update_user_list();
+            });
+            room.on(JitsiMeetJS.events.conference.TRACK_MUTE_CHANGED, (track) => {
+                    update_user_list();
+            });
+            room.on(JitsiMeetJS.events.conference.TRACK_AUDIO_LEVEL_CHANGED, level_changed);
+        });
+
+    room.setLocalParticipantProperty('jitsi-screen', true);
+    if ($('[name="password"]').val()) {
+        room.join($('[name="password"]').val());
+    } else {
+        room.join();
+    }
+}
+
+var level_changed = function(participant, audioLevel){
+    var width = $(`#user-list-${participant} .audiolevel-area`).parent().outerWidth();
+    $(`#user-list-${participant} .audiolevel-area`).css({
+        right: Math.floor((1 - audioLevel) * width),
+    });
+};
+
+var local_tracks = {};
+
+function get_local_video_track(device_id, callback) {
+    if (local_tracks[device_id]) {
+        callback(local_tracks[device_id]);
+        return;
+    }
+    JitsiMeetJS.createLocalTracks({ devices: [ 'video' ], cameraDeviceId: device_id })
+    .then(function(tracks){
+        local_tracks[device_id] = tracks[0];
+        callback(tracks[0]);
+    })
+    .catch(error => {
+        throw error;
+    });
+};
+
+function get_local_audio_track(device_id, callback) {
+    if (local_tracks[device_id]) {
+        callback(local_tracks[device_id]);
+        return;
+    }
+    JitsiMeetJS.createLocalTracks({ devices: [ 'audio' ], micDeviceId: device_id })
+    .then(function(tracks){
+        local_tracks[device_id] = tracks[0];
+        tracks[0].addEventListener(JitsiMeetJS.events.track.TRACK_AUDIO_LEVEL_CHANGED, function(audioLevel) {
+            level_changed(room ? room.myUserId() : 'me', audioLevel);
+        });
+        callback(tracks[0]);
+    })
+    .catch(error => {
+        throw error;
+    });
+};
+
+$('#user-list').on('click', '.microphone-stat', function(e){
+    e.preventDefault();
+    var id = $(this).parents('tr').attr('id').split('-')[2];
+    if (id == 'me') return;
+    var audio_dom = $('#audio-' + id)[0];
+    if (!audio_dom) return;
+    if (audio_dom.muted) {
+        audio_dom.muted = false;
+    } else {
+        audio_dom.muted = true;
+    }
+    update_user_list();
+
+});
+
+$(window).bind('beforeunload', unload);
+$(window).bind('unload', unload);
+function unload() {
+    if (room) {
+        room.leave();
+    }
+    if (connection) {
+		connection.disconnect();
+    }
+
+    for (var idx in windows) {
+        windows[idx].close();
+	}
+}
+
+var teams = {};
+var people = {};
+var dashboard = {};
+$.get('team.csv', function(content){
+    var query_id = 0;
+    content.split("\n").map(function(line){
+        if (line == '') return;
+        var terms = line.split('|');
+        if (terms[0] == 'team') {
+            teams[terms[1]] = terms[2];
+            type = '[團隊]';
+        } else if (terms[0] == 'people') {
+            people[terms[1]] = terms[2];
+            type = '[個人]';
+        } else if (terms[0] == 'dashboard') {
+            dashboard[terms[1]] = terms[2];
+            type = '[戰情室]';
+        }
+    });
+}, 'text');
+
+</script>
+</body>
+</html>
