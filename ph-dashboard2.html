@@ -44,6 +44,11 @@ var current_user_id;
 var user_name;
 $.get('team.csv', function(content){
     var query_id = 0;
+    if (document.location.href.match(/id=([^&]*)&sig=([a-z0-9]*)/)) {
+        var matches = document.location.href.match(/id=([^&]*)&sig=([a-z0-9]*)/);
+        query_id = matches[1];
+        sig = matches[2];
+    }
     content.split("\n").map(function(line){
         if (line == '') return;
         var terms = line.split('|');
