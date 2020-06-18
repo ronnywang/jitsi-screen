@@ -23,11 +23,6 @@
     團隊：<span id="user-name"></span><br>
     遠景攝影機：<select name="camera" id="output-video"></select><br>
     收音選擇：<select name="audio" id="output-audio"></select><br>
-    <div id="area-screenshare" style="display: none">
-    螢幕分享：<span id="screenshare-status"></span>
-        <button type="button" id="btn-screenshare">開啟</button>
-        <button type="button" id="btn-closescreenshare">關閉</button>
-    </div>
     攝影機預覽：<div id="camera-preview"></div>
     <br>
 </div>
@@ -122,7 +117,6 @@ const initOptions = {
 var jitsi_domain;
 var jitsi_room;
 var connection;
-var connection_screenshare;
 var onDeviceListChanged = function(devices) {
     update_devices();
 };
@@ -170,12 +164,6 @@ $('#jitsi-form').submit(function(e){
         connection.addEventListener( JitsiMeetJS.events.connection.CONNECTION_FAILED, function() { alert('連線失敗'); });
         JitsiMeetJS.createLocalTracks({devices: ['audio', 'video']});
         connection.connect();
-        if (user_type == 'team') {
-            connection_screenshare = new JitsiMeetJS.JitsiConnection(null, null, options);
-            connection_screenshare.addEventListener( JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onScreenShareConnected);
-            connection_screenshare.addEventListener( JitsiMeetJS.events.connection.CONNECTION_FAILED, function() { alert('連線失敗'); });
-            connection_screenshare.connect();
-        }
 
         JitsiMeetJS.mediaDevices.addEventListener(
             JitsiMeetJS.events.mediaDevices.DEVICE_LIST_CHANGED,
@@ -415,12 +403,6 @@ var update_screen_video = function(){
                 if ('undefined' !== typeof(track)) {
                     tracks.push(track);
                 }
-            } else if (room_screenshare && user_id == room_screenshare.myUserId()) {
-                var track = room_screenshare.getLocalVideoTrack();
-                var tracks = [];
-                if ('undefined' !== typeof(track)) {
-                    tracks.push(track);
-                }
             } else if ('undefined' !== typeof(room.participants[user_id])) {
                 var tracks = room.participants[user_id].getTracksByMediaType('video');
                 audio_track = room.participants[user_id].getTracksByMediaType('audio')[0];
@@ -485,7 +467,6 @@ var update_screen_video = function(){
 };
 
 var room;
-var room_screenshare;
 var device_list = {audio: [], video: []};
 
 $('#output-audio').change(function(){
@@ -503,36 +484,6 @@ $('#output-audio').change(function(){
                 room.addTrack(track);
             });
         }
-    });
-});
-
-$('#btn-closescreenshare').click(function(e){
-    e.preventDefault();
-    for (var track of room_screenshare.getLocalTracks()) {
-        if (track.deviceId == 'loopback' || track.videoType == 'desktop') {
-            room_screenshare.removeTrack(track);
-        }
-    }
-});
-
-$('#btn-screenshare').click(function(e){
-    e.preventDefault();
-    var promises = [];
-    for (var track of room_screenshare.getLocalTracks()) {
-        if (track.getType() != 'video') continue;
-        if (track.videoType != 'desktop') continue;
-        promises.push(room_screenshare.removeTrack(track));
-    }
-
-    Promise.all(promises).then(function(){
-		JitsiMeetJS.createLocalTracks({ devices: [ 'desktop' ] })
-		.then(function(tracks){
-            for (var track of tracks) {
-            //room_screenshare.addTrack(track);
-            }
-		})
-		.catch(error => {
-		});
     });
 });
 
@@ -627,30 +578,6 @@ var update_devices = function(tracks) {
         });
     }
 };
-
-var onScreenShareConnected = function() {
-    var confOptions = {
-        openBridgeChannel: true,
-        confID: jitsi_domain + '/' + jitsi_room,
-    };
-
-    room_screenshare = connection_screenshare.initJitsiConference(jitsi_room, confOptions);
-    room_screenshare.setDisplayName('SS ' + teams[current_user_id]);
-    room_screenshare.setLocalParticipantProperty('user', 'teamss-' + current_user_id);
-    room_screenshare.setLocalParticipantProperty('display-name', teams[current_user_id]);
-    room_screenshare.on(
-        JitsiMeetJS.events.conference.CONFERENCE_FAILED,
-        function(error) {
-            alert("CONFERENCE_FAILED:" + error);
-        });
-    room_screenshare.on(
-        JitsiMeetJS.events.conference.CONFERENCE_ERROR,
-        function(error) {
-            alert("CONFERENCE_ERROR:" + error);
-        });
-	room_screenshare.join();
-    $('#area-screenshare').show();
-}
 
 var onConnected = function() {
     var confOptions = {
