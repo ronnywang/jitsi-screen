@@ -52,6 +52,12 @@ div {
     height: 337px;
     opacity: 0;
 }
+#a6-camera-video {
+    top: 200px;
+    left: 30px;
+    width: 600px;
+    height: 337px;
+}
 #team-title-left {
     outline: 2px solid;
     background-color: rgba(0,0,0,0.5);
@@ -90,7 +96,7 @@ div {
 <div id="title-logo"></div>
 <div class="video-box" data-id="screenshareA6" data-select="true" id="pc-video"></div>
 <div class="video-box" data-id="asking-pro" data-select="true" id="pro-video"></div>
-<div class="video-box" data-id="cameraA6" style="opacity: 0"></div>
+<div class="video-box" data-id="cameraA6" style="opacity: 0" id="a6-camera-video"></div>
 <div id="team-title-left"></div>
 <div class="video-box" data-id="cameraA3" data-select="true" id="a3-video"><a>A3戰情室現場</a></div>
 <div id="img-footer"></div>
@@ -107,19 +113,21 @@ Jitsi.on('user_box_updated', function(){
     }
 });
 
-Jitsi.addAction('切雙畫面', function() {
+Jitsi.addAction('切QA畫面', function() {
     $('#title-logo').animate({ top: 30, height: 100 }, 1000);
     $('#team-title-left').animate({ top: 550, left: 30 }, 1000);
-    $('#a3-video').animate({ top: 200, left: 30, width: 600, height: 337 }, 1000);
+    $('#a3-video').animate({ opacity: 0 }, 1000);
+    $('#a6-camera-video').animate({ opacity: 1 }, 1000);
     $('#pro-video').animate({ opacity: 1 }, 1000);
     $('#pc-video').animate({ opacity: 0 }, 1000);
     $('.video-box a').animate({ opacity: 0 }, 1000);
 });
 
-Jitsi.addAction('切單畫面', function() {
+Jitsi.addAction('切成果畫面', function() {
     $('#title-logo').animate({ top: 10, height: 50 }, 1000);
     $('#team-title-left').animate({ top: 720 }, 1000);
-    $('#a3-video').animate({ top: 612, left: 977, width: 288, height: 162 }, 1000);
+    $('#a3-video').animate({ opacity: 1}, 1000);
+    $('#a6-camera-video').animate({ opacity: 0 }, 1000);
     $('#pro-video').animate({ opacity: 0 }, 1000);
     $('#pc-video').animate({ opacity: 1 }, 1000);
     $('.video-box a').animate({ opacity: 1 }, 1000);
