@@ -197,7 +197,7 @@ var teamConnectiond = function(team_id, jitsi_room){
 
         height = 1600;
         width = 1200;
-        team_rooms[team_id] = connection.initJitsiConference(jitsi_room, confOptions);
+        team_rooms[team_id] = team_connections[team_id].initJitsiConference(jitsi_room, confOptions);
     
         team_rooms[team_id].setDisplayName('揪松幫手');
         team_rooms[team_id].on(
@@ -326,6 +326,16 @@ var update_screen_video = function(){
             } else if ('undefined' !== typeof(room.participants[user_id])) {
                 var tracks = room.participants[user_id].getTracksByMediaType('video');
                 audio_track = room.participants[user_id].getTracksByMediaType('audio')[0];
+                if ($(this).is('.audio-mute')) {
+                    audio_track = null;
+                }
+            } else if (user_id.match(/^t-/)) {
+                var terms = user_id.split('-');
+                var team_id = terms[1];
+                var uid = terms[2];
+                var team_room = team_rooms[team_id];
+                var tracks = team_room.participants[uid].getTracksByMediaType('video');
+                audio_track = team_room.participants[uid].getTracksByMediaType('audio')[0];
                 if ($(this).is('.audio-mute')) {
                     audio_track = null;
                 }
