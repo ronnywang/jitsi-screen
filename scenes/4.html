@@ -81,11 +81,8 @@ var teams = {};
 var update_user = function(){
     var users = Jitsi.getUsers();
     for (var user of users) {
-        if ('undefined' === typeof(user.properties['user'])) {
-            continue;
-        }
-        if (user.properties['user'].match('^team-')) {
-            var team_id = user.properties['user'].split('-')[1];
+        if (user.id.match(/^t-/) && user.name == 'team') {
+            var team_id = user.id.split('-')[1];
             $('#team-status-' + team_id).attr('data-user', user.id).addClass('video-box').addClass('audio-mute');
         }
     }
