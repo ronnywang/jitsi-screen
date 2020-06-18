@@ -253,7 +253,14 @@ $.get('team.csv', function(content){
         dom.addClass('team-video-box');
         $('body').append(dom);
 
-        $('#team-status-' + team_id).attr('data-team', team_id).addClass('video-box').css('background-image', '').addClass('audio-mute');
+        var my_id = Jitsi.getMyID();
+        var my_data = Jitsi.getUser(my_id);
+        if (!my_data || !my_data.properties || !my_data.properties.user) {
+        } else if (my_data.properties.user.match('^team') && team_id == my_data.properties.user.split('-')[1]) {
+            $('#team-status-' + team_id).attr('data-team', team_id).addClass('video-box').css('background-image', '').addClass('audio-mute');
+        } else if (my_data.properties.user.match('^dashboard')) {
+            $('#team-status-' + team_id).attr('data-team', team_id).addClass('video-box').css('background-image', '').addClass('audio-mute');
+        }
         c ++;
     });
     Jitsi.reload();
