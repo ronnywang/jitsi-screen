@@ -83,7 +83,7 @@ var init_win_env = function(win, preview, event_listener, screen_id){
             if (!room) {
                 return [];
             }
-            if (id.match('^t-')) {
+            if ('undefined' !== typeof(id) && id.match('^t-')) {
                 terms = id.split('-');
                 team_id = terms[1];
                 user_id = terms[2];
