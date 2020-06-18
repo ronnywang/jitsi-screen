@@ -204,7 +204,6 @@ select {
         <div class="col-left" id="left-team" style="display:none"><!-- 已經在單一團隊畫面中 -->
             <h2 id="team-name"></h2>
             <div id="main-video" class="video-box" data-select="true">
-              <div id="main-iframe"></div>
               <span id="main-title"></span>
             </div>
         </div><!-- #left-team -->
@@ -388,8 +387,7 @@ $('#enter-team').click(function(e){
     e.preventDefault();
     var team_id = $('#enter-team').data('team_id');
     Jitsi.updateProperty('viewing_team', team_id);
-    //enter_team(team_id);    
-    window.open(`https://jitsi.president.jothon.online/preteam${team_id}`);
+    enter_team(team_id);
     $(`#team-box-${team_id} .team-name`).removeClass('blinking');
 });
 
@@ -405,7 +403,6 @@ $('#leave-team').click(function(e){
     $('#right-team').hide();
     $('#right-list').show();    
     $('#features-box').hide();
-    $('#main-iframe').html("");
 });
 
 var get_team_members = function(team_id){

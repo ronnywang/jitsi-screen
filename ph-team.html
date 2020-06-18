@@ -162,7 +162,7 @@ $('#jitsi-form').submit(function(e){
         connection = new JitsiMeetJS.JitsiConnection(null, null, options);
         connection.addEventListener( JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnected);
         connection.addEventListener( JitsiMeetJS.events.connection.CONNECTION_FAILED, function() { alert('連線失敗'); });
-        JitsiMeetJS.createLocalTracks({constraints: 'H264' ,maxFps: 12,devices: ['audio', 'video']});
+        JitsiMeetJS.createLocalTracks({devices: ['audio', 'video']});
         connection.connect();
         if (user_type == 'team') {
             connection_screenshare = new JitsiMeetJS.JitsiConnection(null, null, options);
@@ -349,7 +349,7 @@ $('#btn-screenshare').click(function(e){
     }
 
     Promise.all(promises).then(function(){
-		JitsiMeetJS.createLocalTracks({constraints: 'H264' ,maxFps: 12, devices: [ 'desktop' ] })
+		JitsiMeetJS.createLocalTracks({ devices: [ 'desktop' ] })
 		.then(function(tracks){
             for (var track of tracks) {
                 room_screenshare.addTrack(track);
@@ -371,7 +371,7 @@ $('#output-video').change(function(){
     Promise.all(promises).then(function(){
         if ('none' == id) {
         } else if ('screenshare' == id) {
-            JitsiMeetJS.createLocalTracks({constraints: 'H264' ,maxFps: 12, devices: [ 'desktop' ] })
+            JitsiMeetJS.createLocalTracks({ devices: [ 'desktop' ] })
             .then(function(tracks){
                 for (var track of tracks) {
                     room.addTrack(track);
@@ -623,7 +623,7 @@ function get_local_video_track(device_id, callback) {
         callback(local_tracks['v' + device_id]);
         return;
     }
-    JitsiMeetJS.createLocalTracks({constraints: 'H264' ,maxFps: 12, devices: [ 'video' ], cameraDeviceId: device_id })
+    JitsiMeetJS.createLocalTracks({ devices: [ 'video' ], cameraDeviceId: device_id })
     .then(function(tracks){
         local_tracks['v' + device_id] = tracks[0];
         callback(tracks[0]);
@@ -638,7 +638,7 @@ function get_local_audio_track(device_id, callback) {
         callback(local_tracks['a' + device_id]);
         return;
     }
-    JitsiMeetJS.createLocalTracks({constraints: 'H264' ,maxFps: 12, devices: [ 'audio' ], micDeviceId: device_id })
+    JitsiMeetJS.createLocalTracks({ devices: [ 'audio' ], micDeviceId: device_id })
     .then(function(tracks){
         local_tracks['a' + device_id] = tracks[0];
         tracks[0].addEventListener(JitsiMeetJS.events.track.TRACK_AUDIO_LEVEL_CHANGED, function(audioLevel) {
