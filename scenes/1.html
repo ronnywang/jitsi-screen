@@ -196,6 +196,12 @@ var update_view = function(){
             if ('undefined' !== typeof(user.properties['jitsi-screen'])) {
                 box = get_user_box(user, 'control-list');
                 $('.status', box).text('');
+            } else if (user.id && user.id.match(/^t-/) && user.name == 'team') {
+                box = $('#team-box-' + user.id.split('-')[1]);
+                $('.status', box).text('');
+                box.removeClass('error').removeClass('warning');
+            } else if (user.name == '揪松幫手') {
+                continue;
             } else {
                 box = get_user_box(user, 'control-list');
                 $('.status', box).text('不明使用者').addClass('error');
