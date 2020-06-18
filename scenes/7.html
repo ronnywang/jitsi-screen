@@ -188,6 +188,12 @@ select {
 .blinking {
   animation: blink-keyframes 1s ease 0s infinite alternate;
 }
+
+#enter-team {
+  position: absolute;
+  top: 210px;
+  z-index: 99999;
+}
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <div class="container-fluid">
@@ -251,8 +257,8 @@ select {
               <button type="submit">送出</button>
           </form>
           <button id="leave-team">離開這團隊</button>
-          <i class="fas microphone-stat fa-microphone-alt-slash"></i>
-          <i class="fas video-stat fa-video"></i>
+          <!--i class="fas microphone-stat fa-microphone-alt-slash"></i>
+          <i class="fas video-stat fa-video"></i-->
       </div>
       <div id="team-feature"><!-- 團隊功能 -->
           <form id="status-form">

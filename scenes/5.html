@@ -79,6 +79,20 @@ div {
     font-size: 0.9rem;    
     background-color: rgba(0,0,0,0.66);
 }
+#img-screenshot {
+  z-index: 99999;
+  opacity: 0;
+  position fixed;
+  height: 684px;
+  width: 1216px;
+  border: 20px solid white;
+  border-width: 58px 32px;
+  overflow: hidden;
+}
+#img-screenshot canvas {
+  height: 684px !important;
+  width: 1216px !important;  
+}
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -90,6 +104,7 @@ div {
 <div class="team-status">
 	<div class="team-name"></div>
 </div>
+<div id="img-screenshot"></div>
 </script>
 <script>
 
@@ -101,7 +116,7 @@ var anime_config = [
 	[551.929,141.351,227.026,188,1.5,3  ,[11,15],   ],// 4
 	[796.518,141.351,186.339,188,0.5,3  ,[10,14],   ],// 5
 	[1002.375,141.351,149.75,188,1  ,4.5,[19,20],   ],// 6
-	[94.569,575.256,133.639,188,4.5 ,2  ,[9, 13],   ],// 7
+	[94.569,575.256,133.639,168,4.5 ,2  ,[9, 13],   ],// 7
 	[235.32,578.539,160.135,168,4.5 ,0.5,[4],       ],// 8
 	[412.229,578.539,128.691,168,3  ,0.5,[2, 3 ],   ],// 9
 	[673.049,578.539,125.469,168,3  ,1.5,[7, 8 ],   ],// 10
@@ -202,6 +217,7 @@ var anime_final = function(){
 };
 
 var click = function(e){
+/*
     if (x == anime_config.length && e.code == 'Enter') {
         Jitsi.sendTextMessage(JSON.stringify({type: 'start', method: 'anime_final'}));
 		return;
@@ -209,6 +225,26 @@ var click = function(e){
 		return;
 	}
     Jitsi.sendTextMessage(JSON.stringify({type: 'start', method: 'anime_word'}));
+    */
+    if(e.code == 'Enter' && x==0) {
+      console.log("start anim");
+      function typeLoop() {
+        setTimeout(function() {
+          console.log(x);
+          Jitsi.sendTextMessage(JSON.stringify({type: 'start', method: 'anime_word'}));
+          if(x<anime_config.length) {
+            typeLoop();
+          }
+          else {
+            setTimeout(function() {
+              Jitsi.sendTextMessage(JSON.stringify({type: 'start', method: 'anime_final'}));
+              x=0;
+            }, 500);
+          }
+        }, 200);
+      }
+      typeLoop();
+    }
 };
 
 Jitsi.on('message_received', function(ret){
@@ -258,6 +294,10 @@ Jitsi.addAction('拍截圖', function() {
     });
     
     html2canvas($('body')[0], {width: 1280, height: 800}).then(canvas => {
+        $("#img-screenshot").css({"opacity": 0, "height": "684px", "width": "1216px", "top": 0, "left": 0});
+        $("#img-screenshot").html("");
+        $("#img-screenshot").append(canvas);
+        $("#img-screenshot").animate({ opacity: 1 }, 300).delay(500).animate({ top: 1280, left: 800, height: 0, width: 0 }, 500);    
         window.download_file('啟動大合照.png', canvas.toDataURL());
 
         var my_id = Jitsi.getMyID();
