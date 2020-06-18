@@ -112,7 +112,9 @@ Jitsi.on('user_box_updated', function(){
     var result_user_id = $('#a6-cam-video').attr('data-result-user');
     var user = Jitsi.getUser(result_user_id);
     if (user) {
-        if (user.properties['display-name']) {
+        if (user.team) {
+            $('#team-title-left').text('團隊：' + user.team);
+        } else if (user.properties['display-name']) {
             $('#team-title-left').text('團隊：' + user.properties['display-name']);
         } else {
             $('#team-title-left').text('團隊：' + user.name);
