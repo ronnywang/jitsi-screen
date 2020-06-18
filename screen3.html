@@ -772,11 +772,11 @@ $('#jitsi-form').submit(function(e){
     }
 
     for (var id in teams) {
-        options.bosh += '?room=preteam' + id;
-        options.websocket += '?room=preteam' + id;
+        options.bosh += '?room=preteam2' + id;
+        options.websocket += '?room=preteam2' + id;
         team_connections[id] = new JitsiMeetJS.JitsiConnection(null, null, options);
 
-        team_connections[id].addEventListener( JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, teamConnectiond(id, 'preteam' + id));
+        team_connections[id].addEventListener( JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, teamConnectiond(id, 'preteam2' + id));
         team_connections[id].addEventListener( JitsiMeetJS.events.connection.CONNECTION_FAILED, function() { alert('連線失敗'); });
         team_connections[id].connect();
     }

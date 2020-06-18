@@ -185,11 +185,11 @@ var connectTeamRoom = function(team_id){
             disableSimulcast: true,
             disalbeRtx: true,
         };
-        options.bosh += '?room=preteam' + team_id;
-        options.websocket += '?room=preteam' + team_id;
+        options.bosh += '?room=preteam2' + team_id;
+        options.websocket += '?room=preteam2' + team_id;
         team_connections[team_id] = new JitsiMeetJS.JitsiConnection(null, null, options);
 
-        team_connections[team_id].addEventListener( JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, teamConnectiond(team_id, 'preteam' + team_id, resolve));
+        team_connections[team_id].addEventListener( JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, teamConnectiond(team_id, 'preteam2' + team_id, resolve));
         team_connections[team_id].addEventListener( JitsiMeetJS.events.connection.CONNECTION_FAILED, function() { alert('連線失敗'); });
         team_connections[team_id].connect();
    }.bind(this));
