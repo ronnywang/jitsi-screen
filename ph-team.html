@@ -153,7 +153,8 @@ $('#jitsi-form').submit(function(e){
 			},
 			bosh: 'wss://' + jitsi_domain + '/xmpp-websocket',
 			websocket: 'wss://' + jitsi_domain + '/xmpp-websocket',
-            clientNode: 'http://jitsi.org/jitsimeet'
+            clientNode: 'http://jitsi.org/jitsimeet',
+            desktopSharingFrameRate: {min: 30, max: 30},
 
 		};
         options.bosh += '?room=' + jitsi_room;
