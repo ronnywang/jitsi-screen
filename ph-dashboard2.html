@@ -494,9 +494,7 @@ $('#output-audio').change(function(){
         if ('none' == id) {
         } else {
             get_local_audio_track(id, function(track){
-                    if (user_type == 'dashboard') {
-                        room.addTrack(track);
-                    }
+                room.addTrack(track);
             });
         }
     });
@@ -546,7 +544,7 @@ $('#output-video').change(function(){
             JitsiMeetJS.createLocalTracks({ devices: [ 'desktop' ] })
             .then(function(tracks){
                 for (var track of tracks) {
-                    if (user_type == 'dashboard') {
+                    if (user_type != 'team') {
                         room.addTrack(track);
                     }
                 }
@@ -556,7 +554,7 @@ $('#output-video').change(function(){
 
         } else {
             get_local_video_track(id, function(track){
-                if (user_type == 'dashboard') {
+                if (user_type != 'team') {
                     room.addTrack(track);
                 }
             });
