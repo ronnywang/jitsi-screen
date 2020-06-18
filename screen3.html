@@ -1128,7 +1128,13 @@ var update_user_list = function(){
             for (var user_id in team_room.participants) {
                 var option_dom = $('<option></option>');
                 if (team_room.participants[user_id].getDisplayName() == '揪松幫手') continue;
-                option_dom.html('t-' + team_id + '-' + user_id + '. ' + team_room.participants[user_id].getDisplayName()).val('t-' + team_id + '-' + user_id);
+                if (team_room.participants[user_id].getDisplayName() == 'team') {
+                    name = teams[team_id];
+                } else {
+                    name = team_room.participants[user_id].getDisplayName();
+                }
+                
+                option_dom.html('t-' + team_id + '-' + user_id + '. ' + name).val('t-' + team_id + '-' + user_id);
                 $(this).append(option_dom);
             }
         }
