@@ -409,6 +409,7 @@ var update_screen_video = function(){
             });
         } else {
             var audio_track = null;
+            var tracks = [];
             if (user_id == room.myUserId()) {
                 var user_str = room.getLocalParticipantProperty('user');
                 if ('string' === typeof(user_str) && user_str.match('team-')) {
@@ -423,10 +424,10 @@ var update_screen_video = function(){
                     }
                 } else {
                     var track = room.getLocalVideoTrack();
-                }
-                var tracks = [];
-                if ('undefined' !== typeof(track)) {
-                    tracks.push(track);
+                    tracks = [];
+                    if ('undefined' !== typeof(track)) {
+                        tracks.push(track);
+                    }
                 }
             } else if ('undefined' !== typeof(room.participants[user_id])) {
                 var user_str = room.participants[user_id].getProperty('user');
