@@ -63,7 +63,7 @@ $.get('team.csv', function(content){
                 $('#user-select').append($('<option></option>').text(type + terms[2]).val(terms[0] + '-' + terms[1]));
             }
         } else {
-            $('#user-select').append($('<option></option>').text(type + terms[2]).val(terms[0] + '-' + terms[1]));
+            //$('#user-select').append($('<option></option>').text(type + terms[2]).val(terms[0] + '-' + terms[1]));
         }
     });
 }, 'text');
@@ -421,8 +421,9 @@ var update_screen_video = function(){
                             tracks = team_room.participants[uid].getTracksByMediaType('video');
                         }
                     }
+                } else {
+                    var track = room.getLocalVideoTrack();
                 }
-                var track = room.getLocalVideoTrack();
                 var tracks = [];
                 if ('undefined' !== typeof(track)) {
                     tracks.push(track);
