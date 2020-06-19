@@ -413,6 +413,7 @@ var update_screen_video = function(){
             if (user_id == room.myUserId()) {
                 var user_str = room.getLocalParticipantProperty('user');
                 if ('string' === typeof(user_str) && user_str.match('team-')) {
+                    var team_id = user_str.split('-')[1];
                     var team_room = team_rooms[team_id];
                     if ('undefined' === typeof(team_room)) {
                         return;
