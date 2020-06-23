@@ -67,9 +67,11 @@ $('#add-screen').submit(function(e){
         $('#screen-list').append(li_dom);
         screens.push(screen);
         update_user_list();
-		if (id == 0)  {
-			room.selectParticipant(user_id);
-		}
+        user_list = [];
+        for (var id in room.participants) {
+            user_list.push(id);
+        }
+        room.selectParticipants(user_list);
         $('.switch-select').each(function(){
             $(this).html('');
             var id = $(this).parents('li').data('id');
@@ -203,9 +205,11 @@ $('#screen-list').on('change', '.screen-people-select', function(e){
     var li_dom = $(this).parents('li');
     var id = li_dom.data('id');
     var user_id = $(this).val();
-    if (id == 0) {
-        room.selectParticipant(user_id);
+    user_list = [];
+    for (var uid in room.participants) {
+        user_list.push(uid);
     }
+    room.selectParticipants(user_list);
     if (user_id != screens[id].user_id) {
         var tracks = room.participants[user_id].getTracksByMediaType('video');
         var win = screens[id].win;
