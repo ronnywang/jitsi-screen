@@ -271,8 +271,8 @@ label {
             <input type="text" name="width" value="1600" size="5">
             <span class="px-1">x</span>
             <input type="text" name="height" value="900" size="5">
-            <span>｜</span>
             <button class="btn btn-secondary btn-lg mx-1" type="submit"><i class="fas fa-sync"></i></button>
+            <span>｜</span>
             <label for="preview-user">預覽線上人數</label><input type="number" name="preview-user" value="4" style="width: 3em;">
           </form>
       </div>
@@ -521,7 +521,7 @@ var update_preview_content = function(content){
   scene_id = $("#preview-iframe").data('scene_id');
   $("#card-scene-preview .card-header span").text("｜"+current_data.scenes[scene_id].name)
   update_preview_size();
-  setTimeout(function(){ update_preview_size(); }, 1000);
+  //setTimeout(function(){ update_preview_size(); }, 1000);
 };
 
 var event_listener = function(event, screen_id, values){
@@ -660,7 +660,7 @@ $('#form-screen-new').submit(function(e){
   $('.screen-item').removeClass('active');
   $('#screen-item-' + idx).addClass('active');
 
-  var win = window.open('', 'screen-' + idx, config='menubar=no,status=no,toolbar=no,height=' + (height + 100) + ',width=' + (width + 100));
+  var win = window.open('', 'screen-' + idx, config='menubar=no,status=no,toolbar=no,height=' + height + ',width=' + width);
   check_resize(win, width, height);
   init_win_env(win, false, event_listener, idx);
   win.document.open();
@@ -718,7 +718,7 @@ $('#screen-choose-body-area').on('click', '.btn-reopen', function(e){
     /*width = current_data.screens[idx].width;
     height = current_data.screens[idx].height;*/
     scene_id = current_data.screens[idx].scene_id;
-    var win = window.open('', 'screen-' + idx, config='menubar=no,status=no,toolbar=no,height=' + (height + 100) + ',width=' + (width + 100));
+    var win = window.open('', 'screen-' + idx, config='menubar=no,status=no,toolbar=no,height=' + height + ',width=' + width);
     if (current_data.screens[idx].title) {
         win.document.title = '畫面 ' + current_data.screens[idx].title;
     } else {
@@ -782,7 +782,11 @@ $('#scene-list').on('click', '.btn-preview', function(e){
   update_preview_size();
 });
 
-var update_preview_size = function(){
+var update_preview_size = function() {
+    if($('#preview-iframe').contents().find('body').width() == null) {
+      setTimeout(function(){ update_preview_size(); }, 100);
+      return;
+    }
     var width = parseInt($('#resize-form [name="width"]').val());
     var height = parseInt($('#resize-form [name="height"]').val());
 
@@ -1322,7 +1326,8 @@ var onConnected = function() {
     };
 
     $('#logined-area').show();
-    $('#jitsi-url').text('https://' + jitsi_domain + '/' + jitsi_room);
+    var jitsi_room_url = 'https://' + jitsi_domain + '/' + jitsi_room;
+    $('#jitsi-url').html(`<a href="${jitsi_room_url}" target="_blank">${jitsi_room_url}</a>`);
     $('#logined-area [name="bot-name"]').val($('#jitsi-form [name="bot-name"]').val());
     update_devices();
 
