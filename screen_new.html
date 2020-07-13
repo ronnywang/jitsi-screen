@@ -273,7 +273,7 @@ label {
             <input type="text" name="height" value="900" size="5">
             <span>｜</span>
             <button class="btn btn-secondary btn-lg mx-1" type="submit"><i class="fas fa-sync"></i></button>
-            <label for="preview-user">線上人數</label><input type="number" name="preview-user" value="4" style="width: 3em;">
+            <label for="preview-user">預覽線上人數</label><input type="number" name="preview-user" value="4" style="width: 3em;">
           </form>
       </div>
     </div>
@@ -309,12 +309,12 @@ label {
     <div class="card-body">
       <div id="screen-choose-body-area">
         <div class="screen-choose-body" id="screen-choose-body-new">
-            <form id="form-screen-new">
+            <form class="m-0" id="form-screen-new">
               <!--label for="scene-chooser">選擇場景</label><select id="scene-chooser" name="scene-chooser"></select><br-->
               <label for="title">畫面標題</label><input type="text" placeholder="可不輸入" name="title"><br>
-              尺寸(本機)：<br>
+              <!--尺寸(本機)：<br>
               <input type="text" name="width" value="1600" size="5"><span class="px-1">x</span><input type="text" name="height" value="900" size="5"><Br>
-              <!--div class="custom-box"></div>
+              <div class="custom-box"></div>
               <div class="action-box"></div-->
               <button class="btn btn-dark btn-lg mt-3" type="submit">新增預覽至列表</button>
             </form>
@@ -453,7 +453,7 @@ var update_preview_video = function(){
         ctx.clearRect(0, 0, 800, 450);
         ctx.textAlign = 'center';
         ctx.fillStyle = 'white';
-        ctx.font = 'normal 200px Arial';
+        ctx.font = 'normal 100px Arial';
 
         var metric = ctx.measureText(id);
         text_height = metric.actualBoundingBoxAscent + metric.actualBoundingBoxDescent;
@@ -515,9 +515,12 @@ var update_preview_content = function(content){
   init_win_env($('#preview-iframe')[0].contentWindow, true, function(){}, 0);
   $('#preview-iframe')[0].contentDocument.open();
   $('#preview-iframe')[0].contentDocument.write(content);
+  $('#preview-iframe')[0].contentDocument.close();
   update_preview_video();
+  $('#preview-iframe').contents().find('html').css('overflow', 'hidden');
   scene_id = $("#preview-iframe").data('scene_id');
   $("#card-scene-preview .card-header span").text("｜"+current_data.scenes[scene_id].name)
+  update_preview_size();
   setTimeout(function(){ update_preview_size(); }, 1000);
 };
 
@@ -600,8 +603,11 @@ $('#form-screen-new').submit(function(e){
     return;
   }
   var title = $('[name="title"]', this).val();
+  /*
   var width = parseInt($('[name="width"]', this).val());
-  var height = parseInt($('[name="height"]', this).val());
+  var height = parseInt($('[name="height"]', this).val());*/
+  var width = parseInt($('#resize-form [name="width"]').val());
+  var height = parseInt($('#resize-form [name="height"]').val());
   var user_select = {};
 
   $('#form-screen-new .user-select').each(function(){
@@ -670,6 +676,7 @@ $('#form-screen-new').submit(function(e){
       win._isUnloading = true;
       auto_detach_track();
   };
+  $(win.document.body).css('overflow', 'hidden');
   $(win.document.body).css('margin', 0);
   $('.video-box', win.document).ready(function(){
       update_screen_video();
@@ -705,8 +712,11 @@ $('#screen-choose-body-area').on('change', '[name="title"]', function(e){
 $('#screen-choose-body-area').on('click', '.btn-reopen', function(e){
     e.preventDefault();
     var idx = $(this).parents('.screen-choose-body').attr('id').split('-')[3];
-    width = current_data.screens[idx].width;
-    height = current_data.screens[idx].height;
+    var width = parseInt($('#screen-choose-body-' + idx + ' [name="width"]').val());
+    var height = parseInt($('#screen-choose-body-' + idx + ' [name="height"]').val());
+    console.log(width+"/"+height);
+    /*width = current_data.screens[idx].width;
+    height = current_data.screens[idx].height;*/
     scene_id = current_data.screens[idx].scene_id;
     var win = window.open('', 'screen-' + idx, config='menubar=no,status=no,toolbar=no,height=' + (height + 100) + ',width=' + (width + 100));
     if (current_data.screens[idx].title) {
@@ -730,8 +740,12 @@ $('#screen-choose-body-area').on('click', '.btn-reopen', function(e){
         win._isUnloading = true;
         auto_detach_track();
     };
+    $(win.document.body).css('overflow', 'hidden');
+    $(win.document.body).css('margin', 0);
+    $('.video-box', win.document).ready(function(){
+        update_screen_video();
+    });
     windows[idx] = win;
-    update_screen_video();
 });
 
 $('#btn-screen-choose-add').click(function(e){
@@ -787,7 +801,7 @@ var update_preview_size = function(){
     }
     $('#preview-iframe').width(actual_width);
     $('#preview-iframe').height(actual_height);
-    $($('#preview-iframe')[0].contentDocument.body).css('zoom', actual_width / width).css('margin', 0);
+    $('#preview-iframe').contents().find('body').css('zoom', actual_width / width).css('margin', 0);
 };
 
 $('#resize-form').submit(function(e){
@@ -911,11 +925,12 @@ $('#screen-choose-body-area').on('click', '.btn-add-viewer', function(e){
         room.broadcastEndpointMessage({type: 'update_scene', message: get_scene_data()});
     }
 });
+
 var get_scene_data = function(){
     var scenes = {};
     for (var screen_id in current_data.screens) {
         if (current_data.screens[screen_id].viewers.length) {
-            scenes[current_data.screens[screen_id].scene_id] = current_data.scenes[current_data.screens[screen_id].scene_id];;
+            scenes[current_data.screens[screen_id].scene_id] = current_data.scenes[current_data.screens[screen_id].scene_id];
         }
     }
     return {current_data: {
