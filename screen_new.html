@@ -120,7 +120,7 @@ label {
 .screen-choose-body input[name="width"], .screen-choose-body input[name="height"] {
   width: calc(50% - 1em);
 }
-#card-scene-editor{
+#card-userlist{
 	position: absolute;
 	top: 45%;
 	left: -25%;
@@ -229,7 +229,7 @@ label {
         </div>
       </div>
     </div>
-    <div class="card main-card-left" id="card-scene-editor">
+    <div class="card main-card-left" id="card-userlist">
       <div class="card-header text-light bg-secondary">
     	  成員列表
     	  <!--button class="btn btn-dark btn-sm" type="button" id="btn-scene-editor-preview">更新預覽</button>
@@ -260,13 +260,14 @@ label {
     </div>
     <div class="card" id="card-scene-preview">
       <div class="card-header text-light bg-dark">
-        預覽
+        預覽<span></span>
       </div>
       <div class="card-body">
           <iframe id="preview-iframe"></iframe>
       </div>
       <div class="card-footer">
           <form id="resize-form" class="form-inline" style="margin-block-end: 0">
+            <span class="px-1">預覽尺寸</span>
             <input type="text" name="width" value="1600" size="5">
             <span class="px-1">x</span>
             <input type="text" name="height" value="900" size="5">
@@ -309,13 +310,13 @@ label {
       <div id="screen-choose-body-area">
         <div class="screen-choose-body" id="screen-choose-body-new">
             <form id="form-screen-new">
-              <label for="screen-chooser">選擇場景</label><select id="screen-chooser" name="screen-chooser"></select><br>
+              <!--label for="scene-chooser">選擇場景</label><select id="scene-chooser" name="scene-chooser"></select><br-->
               <label for="title">畫面標題</label><input type="text" placeholder="可不輸入" name="title"><br>
-              尺寸：<br>
+              尺寸(本機)：<br>
               <input type="text" name="width" value="1600" size="5"><span class="px-1">x</span><input type="text" name="height" value="900" size="5"><Br>
               <!--div class="custom-box"></div>
               <div class="action-box"></div-->
-              <button class="btn btn-dark btn-lg mt-3" type="submit">新增至列表</button>
+              <button class="btn btn-dark btn-lg mt-3" type="submit">新增預覽至列表</button>
             </form>
         </div>
         <script type="text/html" id="tmpl-screen-choose-body">
@@ -325,9 +326,9 @@ label {
                     <button class="btn-reopen btn btn-dark">重新開啟</button>
                     <button class="btn-reupdate btn btn-dark">重新繪製</button>
                 <br>
-                  場景名稱：<span class="screen-chooser"></span><br>
+                  場景名稱：<span class="scene-chooser"></span><br>
                   畫面標題：<span class="screen-title"></span><br>
-                  尺寸：<br>
+                  尺寸(本機)：<br>
                   <input type="text" name="width" value="1600" size="5"><span class="px-1">x</span><input type="text" name="height" value="900" size="5"><Br>
                   <div class="custom-box"></div>
                   <div class="action-box"></div>
@@ -342,23 +343,6 @@ label {
 <script>
 
 var jitsi_login_data = {};
-
-/*
-$("#login-form").submit(function(e){
-  e.preventDefault();
-
-  jitsi_login_data.url = $("#login-url").val();
-  jitsi_login_data.pw = $("#login-pw").val();
-  jitsi_login_data.name = $("#login-name").val();
-  var matches = jitsi_login_data.url.match('^https://([^/]*)/(.*)$');
-  if (!matches) {
-      alert('網址不正確');
-      return;
-  }
-  $("#section-login").addClass("d-none");
-  $("#section-main").removeClass("d-none");
-  enter_main();
-});*/
 
 var default_data = {
     scenes: {},
@@ -391,7 +375,7 @@ var load_data = function(data){
 		$('#scene-list').append(li_dom);
 	}
     current_data = data;
-    update_screen_choose();
+    update_scene_choose();
 };
 
 $(function(){
@@ -399,9 +383,9 @@ $(function(){
         load_data(default_data);
     });
 });
-
-$('#screen-chooser').change(function(){
-    var scene_id = $('#screen-chooser').val();
+/*
+$('#scene-chooser').change(function(){
+    var scene_id = $('#scene-chooser').val();
     var user_list = get_list_from_content(current_data.scenes[scene_id].content);
     var div_dom = $('#form-screen-new');
     $('.custom-box', div_dom).html('');
@@ -419,17 +403,17 @@ $('#screen-chooser').change(function(){
     var scene = current_data.scenes[scene_id];
     update_preview_content(scene.content);
     update_preview_size();
-});
+});*/
 
-var update_screen_choose = function(){
-    $('#screen-chooser').html('');
+var update_scene_choose = function(){
+    $('#scene-chooser').html('');
 	for (var scene_id in current_data.scenes) {
         var option_dom = $('<option></option>');
 		var scene = current_data.scenes[scene_id];
         option_dom.attr('value', scene_id).text(scene.name);
-        $('#screen-chooser').append(option_dom);
+        $('#scene-chooser').append(option_dom);
 	}
-    $('#screen-chooser').change();
+    $('#scene-chooser').change();
     update_user_list();
 };
 
@@ -468,7 +452,7 @@ var update_preview_video = function(){
         var ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, 800, 450);
         ctx.textAlign = 'center';
-        ctx.fillStyle = 'black';
+        ctx.fillStyle = 'white';
         ctx.font = 'normal 200px Arial';
 
         var metric = ctx.measureText(id);
@@ -532,6 +516,9 @@ var update_preview_content = function(content){
   $('#preview-iframe')[0].contentDocument.open();
   $('#preview-iframe')[0].contentDocument.write(content);
   update_preview_video();
+  scene_id = $("#preview-iframe").data('scene_id');
+  $("#card-scene-preview .card-header span").text("｜"+current_data.scenes[scene_id].name)
+  setTimeout(function(){ update_preview_size(); }, 1000);
 };
 
 var event_listener = function(event, screen_id, values){
@@ -571,7 +558,9 @@ var update_screen_data = function(){
         var screen = current_data.screens[idx];
         var title = '畫面 ' + idx;
         if (screen.title) {
-            title += ' : ' + screen.title;
+          title += ' : ' + screen.title;
+        } else {
+          title += ' : ' + current_data.scenes[screen.scene_id].name;
         }
         var item_dom = $($('#tmpl-screen-list-item').html()).text(title);
         item_dom.attr('id', 'screen-item-' + idx);
@@ -606,85 +595,88 @@ var get_list_from_content = function(content){
 
 $('#form-screen-new').submit(function(e){
 	e.preventDefault();
-    var scene_id = $('#screen-chooser').val();
-    var title = $('[name="title"]', this).val();
-    var width = parseInt($('[name="width"]', this).val());
-    var height = parseInt($('[name="height"]', this).val());
-    var user_select = {};
+  var scene_id = $("#preview-iframe").data('scene_id');
+  if(scene_id == null){
+    return;
+  }
+  var title = $('[name="title"]', this).val();
+  var width = parseInt($('[name="width"]', this).val());
+  var height = parseInt($('[name="height"]', this).val());
+  var user_select = {};
 
-    $('#form-screen-new .user-select').each(function(){
-        user_select[$(this).data('id')] = $(this).val();
-    });
+  $('#form-screen-new .user-select').each(function(){
+      user_select[$(this).data('id')] = $(this).val();
+  });
 
-    var idx = current_data.screens.length;
-    current_data.screens.push({
-        scene_id: scene_id,
-        title: title,
-        width: width,
-        height: height,
-        viewers: $('#form-screen-new .btn-delete-viewer').map(function(a){ return $(this).data('viewer'); }).toArray(),
-        user_select: user_select,
-    });
-    var div_dom = $($('#tmpl-screen-choose-body').html());
-    $('.screen-chooser', div_dom).text(current_data.scenes[scene_id].name);
-    $('.screen-title', div_dom).text(title);
-    $('[name="width"]', div_dom).val(width);
-    $('[name="height"]', div_dom).val(height);
-    var user_list = get_list_from_content(current_data.scenes[scene_id].content);
-    $('.custom-box', div_dom).append('觀眾：<span class="viewer-list"></span><div class="add-viewer-block"></div>');
-    current_data.screens[idx].viewers.map(function(viewer){
-      $('.viewer-list', div_dom).append($('<button class="btn btn-dark"></button>').addClass('btn-delete-viewer').data('viewer', viewer).text(viewer.split('-')[1]));
-    });
-    var viewer_dom = $('<select></select>').addClass('viewer-select');
-    viewer_dom.append($('<option></option>').attr('value', 'default-預設').text('預設'));
-    $('.custom-box .add-viewer-block', div_dom).append(viewer_dom);
-    $('.custom-box .add-viewer-block', div_dom).append($('<button class="btn-add-viewer btn btn-dark"><i class="fas fa-plus"></i></button>'));
-    user_list.map(function(id){
-        $('.custom-box', div_dom).append($('<span></span>').text('User ' + id + '：'));
-        $('.custom-box', div_dom).append($('<select></select>').addClass('user-select').addClass('new').data('id', id).addClass('user-select-' + id));
-        $('.custom-box', div_dom).append('<br>');
-    });
-    div_dom.attr('id', 'screen-choose-body-' + idx).data('screen_id', idx);
+  var idx = current_data.screens.length;
+  current_data.screens.push({
+      scene_id: scene_id,
+      title: title,
+      width: width,
+      height: height,
+      viewers: $('#form-screen-new .btn-delete-viewer').map(function(a){ return $(this).data('viewer'); }).toArray(),
+      user_select: user_select,
+  });
+  var div_dom = $($('#tmpl-screen-choose-body').html());
+  $('.scene-chooser', div_dom).text(current_data.scenes[scene_id].name);
+  $('.screen-title', div_dom).text(title);
+  $('[name="width"]', div_dom).val(width);
+  $('[name="height"]', div_dom).val(height);
+  var user_list = get_list_from_content(current_data.scenes[scene_id].content);
+  $('.custom-box', div_dom).append('觀眾：<span class="viewer-list"></span><div class="add-viewer-block"></div>');
+  current_data.screens[idx].viewers.map(function(viewer){
+    $('.viewer-list', div_dom).append($('<button class="btn btn-dark"></button>').addClass('btn-delete-viewer').data('viewer', viewer).text(viewer.split('-')[1]));
+  });
+  var viewer_dom = $('<select></select>').addClass('viewer-select');
+  viewer_dom.append($('<option></option>').attr('value', 'default-預設').text('預設'));
+  $('.custom-box .add-viewer-block', div_dom).append(viewer_dom);
+  $('.custom-box .add-viewer-block', div_dom).append($('<button class="btn-add-viewer btn btn-dark"><i class="fas fa-plus"></i></button>'));
+  user_list.map(function(id){
+      $('.custom-box', div_dom).append($('<span></span>').text('User ' + id + '：'));
+      $('.custom-box', div_dom).append($('<select></select>').addClass('user-select').addClass('new').data('id', id).addClass('user-select-' + id));
+      $('.custom-box', div_dom).append('<br>');
+  });
+  div_dom.attr('id', 'screen-choose-body-' + idx).data('screen_id', idx).data('scene_id', scene_id);
 
-    $('#screen-choose-body-area').append(div_dom);
-    $('#card-screen-settings .card-header span').text('畫面 ' + idx + ' ' + title);
-    update_user_list();
-    user_list.map(function(id){
-        $('.user-select-' + id).each(function(){
-            $(this).val($('#form-screen-new [name="user-select[' + id + ']"]').val());
-        });
-    });
+  $('#screen-choose-body-area').append(div_dom);
+  $('#card-screen-settings .card-header span').text('畫面 ' + idx + ' ' + title);
+  update_user_list();
+  user_list.map(function(id){
+      $('.user-select-' + id).each(function(){
+          $(this).val($('#form-screen-new [name="user-select[' + id + ']"]').val());
+      });
+  });
 
-    $('#screen-choose-body-area .screen-choose-body').hide();
-    $('.btn-reopen', div_dom).hide();
-    div_dom.show();
-    update_screen_data();
-    $('.screen-item').removeClass('active');
-    $('#screen-item-' + idx).addClass('active');
+  $('#screen-choose-body-area .screen-choose-body').hide();
+  $('.btn-reopen', div_dom).hide();
+  div_dom.show();
+  update_screen_data();
+  $('.screen-item').removeClass('active');
+  $('#screen-item-' + idx).addClass('active');
 
-    var win = window.open('', 'screen-' + idx, config='menubar=no,status=no,toolbar=no,height=' + (height + 100) + ',width=' + (width + 100));
-    check_resize(win, width, height);
-    init_win_env(win, false, event_listener, idx);
-    win.document.open();
-    win.document.write(current_data.scenes[scene_id].content);
-    if (title) {
-        win.document.title = '畫面 ' + title;
-    } else {
-        win.document.title = '畫面 ' + idx;
-    }
-    win.onunload = function(){
-        $('#screen-choose-body-' + idx + ' .btn-reopen').show();
-        $('#screen-choose-body-' + idx + ' .btn-focus').hide();
-        win._isUnloading = true;
-        auto_detach_track();
-    };
-    $(win.document.body).css('margin', 0);
-    $('.video-box', win.document).ready(function(){
-        update_screen_video();
-    });
-    windows[idx] = win;
+  var win = window.open('', 'screen-' + idx, config='menubar=no,status=no,toolbar=no,height=' + (height + 100) + ',width=' + (width + 100));
+  check_resize(win, width, height);
+  init_win_env(win, false, event_listener, idx);
+  win.document.open();
+  win.document.write(current_data.scenes[scene_id].content);
+  if (title) {
+      win.document.title = '畫面 ' + title;
+  } else {
+      win.document.title = '畫面 ' + idx;
+  }
+  win.onunload = function(){
+      $('#screen-choose-body-' + idx + ' .btn-reopen').show();
+      $('#screen-choose-body-' + idx + ' .btn-focus').hide();
+      win._isUnloading = true;
+      auto_detach_track();
+  };
+  $(win.document.body).css('margin', 0);
+  $('.video-box', win.document).ready(function(){
+      update_screen_video();
+  });
+  windows[idx] = win;
 
-    // XXX
+  // XXX
 });
 
 $('#screen-choose-body-area').on('click', '.btn-focus', function(e){
@@ -758,11 +750,20 @@ $('#screen-list').on('click', '.screen-item', function(e){
     $('#screen-choose-body-' + idx).show();
     $('#card-screen-settings .card-header span').text($(this).text());
     $(this).addClass('active');
+
+    var scene_id = $('#screen-choose-body-' + idx).data('scene_id');
+    var scene = current_data.scenes[scene_id];
+    $("#preview-iframe").data('scene_id', scene_id);
+    update_preview_content(scene.content);
+    update_preview_size();
+
 });
 
 $('#scene-list').on('click', '.btn-preview', function(e){
 	e.preventDefault();
-  var scene = current_data.scenes[$(this).parents('li').data('id')];
+  var scene_id = $(this).parents('li').data('id');
+  var scene = current_data.scenes[scene_id];
+  $("#preview-iframe").data('scene_id', scene_id);
   update_preview_content(scene.content);
   update_preview_size();
 });
@@ -1505,16 +1506,16 @@ $('#main-card-left-toggler').on('click',function(e){
 $(window).bind('beforeunload', unload);
 $(window).bind('unload', unload);
 function unload() {
-    if (room) {
-        room.leave();
-    }
-    if (connection) {
-		connection.disconnect();
-    }
+  if (room) {
+    room.leave();
+  }
+  if (connection) {
+    connection.disconnect();
+  }
 
-    for (var idx in windows) {
-        windows[idx].close();
-	}
+  for (var idx in windows) {
+    windows[idx].close();
+  }
 }
 
 </script>
